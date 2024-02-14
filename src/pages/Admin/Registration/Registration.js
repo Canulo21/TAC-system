@@ -28,7 +28,6 @@ function Registration() {
   const [birthDate, setBirthDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
   const [formData, setFormData] = useState({
     fname: "",
     mname: "",
@@ -80,7 +79,6 @@ function Registration() {
     fetchData();
   }, []);
 
-  // Function to get the sliced data for the current page
   const getSlicedData = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -88,6 +86,7 @@ function Registration() {
   };
 
   // Pagination controls
+  const itemsPerPage = 10;
   const pagesPerBatch = 10;
   const totalBatches = Math.ceil(data.length / itemsPerPage);
   const currentBatch = Math.ceil(currentPage / pagesPerBatch);
@@ -96,6 +95,9 @@ function Registration() {
 
   // Check if there is data to display
   const hasData = data.length > 0;
+
+  // Determine whether to show the right arrow
+  const showRightArrow = currentBatch < totalBatches && endPage < totalBatches;
 
   const handleInsertData = async () => {
     console.log(formData); // Check the values before making the API call
@@ -150,17 +152,32 @@ function Registration() {
       // Fetch the updated data
       fetchData();
     } catch (error) {
-      console.error("Error inserting data:", error);
-      toast.error("Something Went Wrong!!:", error, {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+      if (error.response && error.response.status === 409) {
+        // Data already exists, display a warning
+        toast.error("Member already exists!", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      } else {
+        // Other errors
+        console.error("Error inserting data:", error);
+        toast.error("Something Went Wrong!!:", error, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      }
     }
   };
 
@@ -289,9 +306,8 @@ function Registration() {
           <FontAwesomeIcon icon={faUserPlus} />
           Add
         </button>
-
         {/* Pagination controls */}
-        {hasData && (
+        {hasData && pagesPerBatch <= 10 && (
           <div className="pt-5 flex justify-center gap-2">
             {currentBatch > 1 && (
               <button
@@ -317,7 +333,7 @@ function Registration() {
               </button>
             ))}
 
-            {currentBatch < totalBatches && (
+            {showRightArrow && (
               <button
                 className="font-bold pagi"
                 onClick={() =>
@@ -328,7 +344,6 @@ function Registration() {
             )}
           </div>
         )}
-
         {showModal ? (
           <div className="registration-holder ">
             <form className="bg-[#fafafa] shadow-md rounded px-8 pt-6 pb-8 mb-4">

@@ -47,42 +47,72 @@ app.post("/addMember", (req, res) => {
 
   const { fname, mname, lname, gender, birthdate, category, position } = data;
 
-  const query =
-    "INSERT INTO users (fname, mname, lname, gender, birthdate, category, position) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  // Check if the full name is already registered
+  const fullnameQuery =
+    "SELECT * FROM users WHERE CONCAT(fname, ' ', mname, ' ', lname) = ?";
 
   db.query(
-    query,
-    [fname, mname, lname, gender, birthdate, category, position],
-    (err, result) => {
-      if (err) {
-        console.error("Error inserting data:", err);
-        res
-          .status(500)
-          .json({ error: "Internal Server Error", details: err.message });
-      } else {
-        console.log("Data inserted successfully");
-
-        // After successful insertion, retrieve the last inserted ID
-        const lastInsertedId = result.insertId;
-
-        // Query to retrieve the inserted data in descending order based on user_id
-        const selectQuery =
-          "SELECT * FROM users WHERE user_id = ? ORDER BY user_id DESC LIMIT 1";
-        db.query(selectQuery, [lastInsertedId], (selectErr, selectResult) => {
-          if (selectErr) {
-            console.error("Error retrieving data:", selectErr);
-            res.status(500).json({
-              error: "Internal Server Error",
-              details: selectErr.message,
-            });
-          } else {
-            const insertedData = selectResult[0];
-            res.status(200).json({
-              message: "Data inserted successfully",
-              data: insertedData,
-            });
-          }
+    fullnameQuery,
+    [`${fname} ${mname} ${lname}`],
+    (fullnameErr, existingUsers) => {
+      if (fullnameErr) {
+        console.error("Error checking existing data:", fullnameErr);
+        res.status(500).json({
+          error: "Internal Server Error",
+          details: fullnameErr.message,
         });
+      } else {
+        if (existingUsers.length > 0) {
+          // Full name is already registered
+          console.log("Data is already registered!");
+          res.status(409).json({ error: "Data already exists" });
+        } else {
+          // Proceed with the insertion logic
+          const insertQuery =
+            "INSERT INTO users (fname, mname, lname, gender, birthdate, category, position) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+          db.query(
+            insertQuery,
+            [fname, mname, lname, gender, birthdate, category, position],
+            (insertErr, result) => {
+              if (insertErr) {
+                console.error("Error inserting data:", insertErr);
+                res.status(500).json({
+                  error: "Internal Server Error",
+                  details: insertErr.message,
+                });
+              } else {
+                console.log("Data inserted successfully");
+
+                // After successful insertion, retrieve the last inserted ID
+                const lastInsertedId = result.insertId;
+
+                // Query to retrieve the inserted data in descending order based on user_id
+                const selectQuery =
+                  "SELECT * FROM users WHERE user_id = ? ORDER BY user_id DESC LIMIT 1";
+                db.query(
+                  selectQuery,
+                  [lastInsertedId],
+                  (selectErr, selectResult) => {
+                    if (selectErr) {
+                      console.error("Error retrieving data:", selectErr);
+                      res.status(500).json({
+                        error: "Internal Server Error",
+                        details: selectErr.message,
+                      });
+                    } else {
+                      const insertedData = selectResult[0];
+                      res.status(200).json({
+                        message: "Data inserted successfully",
+                        data: insertedData,
+                      });
+                    }
+                  }
+                );
+              }
+            }
+          );
+        }
       }
     }
   );
