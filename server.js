@@ -47,6 +47,13 @@ app.post("/addMember", (req, res) => {
 
   const { fname, mname, lname, gender, birthdate, category, position } = data;
 
+  if (!fname || !lname || !gender || !birthdate || !category || !position) {
+    return res.status(400).json({
+      error: "Bad Request",
+      details: "All fields are required",
+    });
+  }
+
   // Check if the full name is already registered
   const fullnameQuery =
     "SELECT * FROM users WHERE CONCAT(fname, ' ', mname, ' ', lname) = ?";

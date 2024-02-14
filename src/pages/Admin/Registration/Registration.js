@@ -14,10 +14,7 @@ import {
   faUserPlus,
   faTrash,
   faClose,
-  faRightLong,
-  faLeftRight,
   faArrowLeftLong,
-  faArrowRight,
   faArrowRightLong,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -99,8 +96,11 @@ function Registration() {
   // Determine whether to show the right arrow
   const showRightArrow = currentBatch < totalBatches && endPage < totalBatches;
 
-  const handleInsertData = async () => {
+  const handleInsertData = async (e) => {
     console.log(formData); // Check the values before making the API call
+
+    e.preventDefault();
+    setErrors(validateValues(formData));
 
     // Adjust the date to the local time zone
     const localBirthDate = birthDate
@@ -155,6 +155,18 @@ function Registration() {
       if (error.response && error.response.status === 409) {
         // Data already exists, display a warning
         toast.error("Member already exists!", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      } else if (error.response && error.response.status === 400) {
+        // Data already exists, display a warning
+        toast.error("Please provide the required field", {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -235,6 +247,31 @@ function Registration() {
       ...formData,
       [name]: value,
     });
+  };
+
+  const [errors, setErrors] = useState({});
+
+  const validateValues = (inputValues) => {
+    let errors = {};
+    if (inputValues.fname.trim() === "") {
+      errors.fname = "Provide Firstname";
+    }
+    if (inputValues.lname.trim() === "") {
+      errors.lname = "Provide Lastname";
+    }
+    if (!inputValues.birthdate || inputValues.birthdate.trim() === "") {
+      errors.birthdate = "Provide Birthdate";
+    }
+    if (inputValues.gender.trim() === "") {
+      errors.gender = "Choose Gender";
+    }
+    if (inputValues.position.trim() === "") {
+      errors.position = "Choose Position";
+    }
+    if (inputValues.category.trim() === "") {
+      errors.category = "Choose Category";
+    }
+    return errors;
   };
 
   return (
@@ -373,7 +410,8 @@ function Registration() {
                   <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-first-name">
-                    First Name
+                    First Name{" "}
+                    <span className="text-red-600 font-bold text-lg"> *</span>
                   </label>
                   <input
                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -385,12 +423,20 @@ function Registration() {
                     placeholder="eg. Juan"
                     required
                   />
+                  {errors.fname ? (
+                    <p className="error text-red-600 font-bold">
+                      {errors.fname}
+                    </p>
+                  ) : null}
                 </div>
-                <div className="w-full md:w-1/3 px-3">
+                <div className="w-full md:w-1/3 px-3 pt-2">
                   <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-last-name">
                     Middle Name
+                    <span className="text-gray-400 font-bold align-super text-xs ml-2">
+                      (optional)
+                    </span>
                   </label>
                   <input
                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -407,6 +453,7 @@ function Registration() {
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-last-name">
                     Last Name
+                    <span className="text-red-600 font-bold text-lg"> *</span>
                   </label>
                   <input
                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -417,6 +464,11 @@ function Registration() {
                     onChange={handleInputChange}
                     placeholder="eg. Cruz"
                   />
+                  {errors.lname ? (
+                    <p className="error text-red-600 font-bold">
+                      {errors.lname}
+                    </p>
+                  ) : null}
                 </div>
               </div>
               <div className="flex flex-wrap -mx-3 mb-6">
@@ -425,6 +477,7 @@ function Registration() {
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-birth-date">
                     Birthdate
+                    <span className="text-red-600 font-bold text-lg"> *</span>
                   </label>
                   <div className="relative w-full">
                     <DatePicker
@@ -453,12 +506,18 @@ function Registration() {
                       <FontAwesomeIcon icon={faCalendar} />
                     </div>
                   </div>
+                  {errors.birthdate ? (
+                    <p className="error text-red-600 font-bold">
+                      {errors.birthdate}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="w-full md:w-1/4 px-3">
                   <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-last-name">
                     Gender
+                    <span className="text-red-600 font-bold text-lg"> *</span>
                   </label>
                   <div className="relative">
                     <select
@@ -475,12 +534,18 @@ function Registration() {
                       <FontAwesomeIcon icon={faChevronDown} />
                     </div>
                   </div>
+                  {errors.gender ? (
+                    <p className="error text-red-600 font-bold">
+                      {errors.gender}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="w-full md:w-1/4 px-3">
                   <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-last-name">
                     Position
+                    <span className="text-red-600 font-bold text-lg"> *</span>
                   </label>
                   <div className="relative">
                     <select
@@ -501,12 +566,18 @@ function Registration() {
                       <FontAwesomeIcon icon={faChevronDown} />
                     </div>
                   </div>
+                  {errors.position ? (
+                    <p className="error text-red-600 font-bold">
+                      {errors.position}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="w-full md:w-1/4 px-3">
                   <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-last-name">
                     Category
+                    <span className="text-red-600 font-bold text-lg"> *</span>
                   </label>
                   <div className="relative">
                     <select
@@ -525,6 +596,11 @@ function Registration() {
                       <FontAwesomeIcon icon={faChevronDown} />
                     </div>
                   </div>
+                  {errors.category ? (
+                    <p className="error text-red-600 font-bold">
+                      {errors.category}
+                    </p>
+                  ) : null}
                 </div>
               </div>
               <div className="flex items-center justify-between">
