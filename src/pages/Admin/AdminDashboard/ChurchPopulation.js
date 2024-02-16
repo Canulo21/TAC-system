@@ -45,8 +45,8 @@ function ChurchPopulation() {
     datasets: [
       {
         data: [
-          genderCounts.Female,
           genderCounts.Male,
+          genderCounts.Female,
           totalMembers, // Include the totalMembers count
         ],
         backgroundColor: [

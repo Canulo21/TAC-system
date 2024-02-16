@@ -33,6 +33,7 @@ app.get("/categorized", (req, res) => {
   });
 });
 
+// get gender
 app.get("/gender", (req, res) => {
   const query = "SELECT gender From users";
   db.query(query, (err, data) => {
@@ -121,6 +122,57 @@ app.post("/addMember", (req, res) => {
           );
         }
       }
+    }
+  );
+});
+// view a member data
+app.get("/viewMember/:id", (req, res) => {
+  const memberID = req.params.id;
+
+  const query = `SELECT * FROM users WHERE user_id = ?`;
+
+  db.query(query, [memberID], (err, result) => {
+    if (err) {
+      console.error("Error updating user:", err);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    } else {
+      if (result.length === 0) {
+        res.status(404).json({ error: "Member not found" });
+      } else {
+        // Send the member data back to the client
+        res.status(200).json(result[0]);
+      }
+    }
+  });
+});
+// update member data
+app.put("/updateMember/:id", (req, res) => {
+  const userId = req.params.id;
+  const { data } = req.body; // Destructure 'data' from req.body
+
+  const { fname, mname, lname, birthdate, gender, position, category } = data;
+  const query =
+    "UPDATE users SET `fname`=?, `mname`=?, `lname`=?, `birthdate`=?, `gender`=?, `position`=?, `category`=? WHERE user_id = ?";
+
+  db.query(
+    query,
+    [fname, mname, lname, birthdate, gender, position, category, userId],
+    (queryError, result) => {
+      if (queryError) {
+        console.error("updateError", queryError);
+        return res.status(500).json({
+          error: "Failed to update user.",
+          details: queryError.message,
+        });
+      }
+      if (!result.affectedRows) {
+        return res.status(404).json({
+          error: "User not found.",
+        });
+      }
+      return res.json({ updated: true });
     }
   );
 });

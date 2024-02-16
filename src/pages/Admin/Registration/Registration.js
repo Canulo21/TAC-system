@@ -17,6 +17,7 @@ import {
   faArrowLeftLong,
   faArrowRightLong,
 } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 function Registration() {
   const [avatar, setAvatar] = useState(null);
@@ -24,6 +25,7 @@ function Registration() {
   const [avatarUrl, setAvatarUrl] = useState(avatarProfile);
   const [birthDate, setBirthDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [formData, setFormData] = useState({
     fname: "",
@@ -97,8 +99,6 @@ function Registration() {
   const showRightArrow = currentBatch < totalBatches && endPage < totalBatches;
 
   const handleInsertData = async (e) => {
-    console.log(formData); // Check the values before making the API call
-
     e.preventDefault();
     setErrors(validateValues(formData));
 
@@ -320,10 +320,12 @@ function Registration() {
                 </td>
                 <td className="border border-slate-300 p-2">
                   <div className="flex gap-2 justify-center">
-                    <button className="bg-green-500 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#12372a]">
+                    <Link
+                      className="bg-green-500 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#12372a]"
+                      to={`/updateMember/${d.user_id}`}>
                       <FontAwesomeIcon icon={faEdit} />
                       Edit
-                    </button>
+                    </Link>
                     <button
                       className="bg-red-500 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#a93737]"
                       onClick={() => handleDelete(d.user_id)}>
@@ -381,6 +383,8 @@ function Registration() {
             )}
           </div>
         )}
+
+        {/* MODAL FOR ADD MEMBER */}
         {showModal ? (
           <div className="registration-holder ">
             <form className="bg-[#fafafa] shadow-md rounded px-8 pt-6 pb-8 mb-4">
