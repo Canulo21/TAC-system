@@ -27,6 +27,7 @@ function Registration() {
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [dataImage, setDataImage] = useState([]);
   const [formData, setFormData] = useState({
     fname: "",
     mname: "",
@@ -37,15 +38,8 @@ function Registration() {
     position: "",
   });
 
-  const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-
-    if (selectedFile && selectedFile.type.startsWith("image/")) {
-      setAvatar(selectedFile);
-      setAvatarUrl(URL.createObjectURL(selectedFile));
-    } else {
-      console.error("Invalid file type. Please select an image.");
-    }
+  const handleImage = (e) => {
+    setAvatar(e.target.files[0]);
   };
 
   const closeModal = () => {
@@ -99,6 +93,18 @@ function Registration() {
   const showRightArrow = currentBatch < totalBatches && endPage < totalBatches;
 
   const handleInsertData = async (e) => {
+    const imagedata = new FormData();
+    imagedata.append("image", avatar);
+    axios
+      .post("http://localhost:8080/uploadProfile", imagedata)
+      .then((res) => {
+        if (res.data.Status === "Success") {
+          console.log("WHat the nice!");
+        } else {
+          console.log("Failed");
+        }
+      })
+      .catch((err) => console.log(err));
     e.preventDefault();
     setErrors(validateValues(formData));
 
@@ -242,6 +248,7 @@ function Registration() {
   };
 
   const handleInputChange = (e) => {
+    e.preventDefault();
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -273,6 +280,16 @@ function Registration() {
     }
     return errors;
   };
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/users")
+      .then((res) => {
+        setDataImage(res.data[0]); // Assuming res.data is an array and you want to set the state with the first element
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   return (
     <>
@@ -403,11 +420,7 @@ function Registration() {
                 )}
               </div>
               <div className="flex items-center flex-col mb-10 mt-10">
-                <input
-                  type="file"
-                  onChange={handleFileChange}
-                  accept="image/*"
-                />
+                <input type="file" onChange={handleImage} accept="image/*" />
               </div>
               <div className="flex flex-wrap -mx-3 mb-6">
                 <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">

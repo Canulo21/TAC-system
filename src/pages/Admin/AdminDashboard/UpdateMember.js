@@ -18,6 +18,7 @@ function UpdateMember() {
   const [avatar, setAvatar] = useState(null);
   const [birthDate, setBirthDate] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(avatarProfile);
+  const [dataImage, setDataImage] = useState([]);
   const [formData, setFormData] = useState({
     fname: "",
     mname: "",
@@ -29,6 +30,7 @@ function UpdateMember() {
   });
 
   const { id } = useParams();
+
   useEffect(() => {
     axios
       .get(`http://localhost:8080/viewMember/${id}`)
@@ -50,16 +52,57 @@ function UpdateMember() {
       .catch((err) => console.log(err));
   }, [id]);
 
+  // Corrected formattedData
+  useEffect(() => {
+    if (formData.birthdate) {
+      const birthdate = new Date(formData.birthdate);
+      const localBirthDate = new Date(
+        birthdate.getTime() - birthdate.getTimezoneOffset() * 60000
+      );
+      const formattedBirthdate = localBirthDate.toISOString().split("T")[0];
+
+      setFormData({
+        ...formData,
+        birthdate: formattedBirthdate,
+      });
+    }
+  }, [formData.birthdate]);
+
+  const handleImage = (e) => {
+    setAvatar(e.target.files[0]);
+  };
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/users")
+      .then((res) => {
+        setDataImage(res.data[0]); // Assuming res.data is an array and you want to set the state with the first element
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   const handleUpdate = (e) => {
+    const imagedata = new FormData();
+    imagedata.append("image", avatar);
+    axios
+      .post("http://localhost:8080/uploadProfile", imagedata)
+      .then((res) => {
+        if (res.data.Status === "Success") {
+          console.log("WHat the nice!");
+        } else {
+          console.log("Failed");
+        }
+      })
+      .catch((err) => console.log(err));
     e.preventDefault();
+
     axios
       .put(`http://localhost:8080/updateMember/${id}`, {
         data: formData,
       })
       .then((res) => {
         if (res.data.updated) {
-          console.log("Updated successfully");
-          // Optionally, you can show a success message using toast
           toast.success("Updated successfully! 👌", {
             position: "top-right",
             autoClose: 2000,
@@ -71,14 +114,10 @@ function UpdateMember() {
             theme: "colored",
           });
         } else {
-          console.log("Update failed");
-          // Optionally, you can show an error message using toast
           toast.error("Update failed");
         }
       })
       .catch((error) => {
-        console.error("Error updating data:", error);
-        // Optionally, you can show an error message using toast
         toast.error("Error updating member");
       });
   };
@@ -99,13 +138,17 @@ function UpdateMember() {
               {avatarUrl && (
                 <img
                   className="rounded-full ring-2 ring-gray-300 w-32 h-32 dark:ring-gray-500 p-1"
-                  src={avatarUrl}
+                  src={
+                    dataImage.profile_pic_url
+                      ? `http://localhost:8080/profilepics/${dataImage.profile_pic_url}`
+                      : avatarUrl
+                  }
                   alt="Selected Avatar"
                 />
               )}
             </div>
             <div className="flex items-center flex-col mb-10 mt-10">
-              <input type="file" onChange="" accept="image/*" />
+              <input type="file" onChange={handleImage} accept="image/*" />
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
               <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">

@@ -2,10 +2,13 @@ const express = require("express");
 const mysql = require("mysql");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const multer = require("multer");
+const path = require("path");
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static("public"));
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -191,6 +194,34 @@ app.delete("/deleteMember/:id", (req, res) => {
     } else {
       res.status(200).json({ message: "Data deleted successfully" });
     }
+  });
+});
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/profilepics");
+  },
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname + "_" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+
+const upload = multer({
+  storage: storage,
+});
+
+// for upload image
+app.post("/uploadProfile", upload.single("image"), (req, uploadRes) => {
+  console.log("here", req.file);
+  const image = req.file.filename;
+  const query = "UPDATE users SET profile_pic_url = ?";
+
+  db.query(query, [image], (err, res) => {
+    if (err) return res.json({ Message: "Error" });
+    return uploadRes.json({ Status: "Success" });
   });
 });
 
