@@ -8,7 +8,6 @@ const path = require("path");
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static("public"));
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -212,16 +211,42 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
 });
+app.use("/profilepics/:id", express.static("public/profilepics"));
 
-// for upload image
-app.post("/uploadProfile", upload.single("image"), (req, uploadRes) => {
-  console.log("here", req.file);
+// for edit upload image
+app.put("/uploadProfile/:id", upload.single("file"), (req, uploadRes) => {
+  const userId = req.params.id;
   const image = req.file.filename;
-  const query = "UPDATE users SET profile_pic_url = ?";
+  const query = "UPDATE users SET profile_pic_url = ? WHERE user_id = ?";
 
-  db.query(query, [image], (err, res) => {
-    if (err) return res.json({ Message: "Error" });
-    return uploadRes.json({ Status: "Success" });
+  db.query(query, [image, userId], (err, result) => {
+    if (err) {
+      console.error(err);
+      return uploadRes.status(500).json({ Message: "Error" });
+    }
+
+    if (result.affectedRows === 0) {
+      return uploadRes.status(404).json({ Message: "User not found" });
+    }
+
+    return uploadRes.json({ status: "Success" });
+  });
+});
+app.post("/uploadProfile", upload.single("file"), (req, uploadRes) => {
+  const image = req.file.filename;
+  const insertQuery = "INSERT INTO users (profilepics) VALUES (?)";
+
+  db.query(insertQuery, [image], (err, result) => {
+    if (err) {
+      console.error(err);
+      return uploadRes.status(500).json({ Message: "Error" });
+    }
+
+    if (result.affectedRows === 0) {
+      return uploadRes.status(404).json({ Message: "User not found" });
+    }
+
+    return uploadRes.json({ status: "Success" });
   });
 });
 

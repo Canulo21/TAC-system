@@ -25,7 +25,6 @@ function Registration() {
   const [avatarUrl, setAvatarUrl] = useState(avatarProfile);
   const [birthDate, setBirthDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [dataImage, setDataImage] = useState([]);
   const [formData, setFormData] = useState({
@@ -98,7 +97,7 @@ function Registration() {
     axios
       .post("http://localhost:8080/uploadProfile", imagedata)
       .then((res) => {
-        if (res.data.Status === "Success") {
+        if (res.data.status === "Success") {
           console.log("WHat the nice!");
         } else {
           console.log("Failed");
@@ -414,11 +413,16 @@ function Registration() {
                 {avatarUrl && (
                   <img
                     className="rounded-full ring-2 ring-gray-300 w-32 h-32 dark:ring-gray-500 p-1"
-                    src={avatarUrl}
+                    src={
+                      dataImage.profile_pic_url
+                        ? `http://localhost:8080/profilepics/${dataImage.profile_pic_url}`
+                        : avatarUrl
+                    }
                     alt="Selected Avatar"
                   />
                 )}
               </div>
+
               <div className="flex items-center flex-col mb-10 mt-10">
                 <input type="file" onChange={handleImage} accept="image/*" />
               </div>

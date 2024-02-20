@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./UpdateMember.css";
 import avatarProfile from "../../../Assets/images/avatar.png";
 import DatePicker from "react-datepicker";
@@ -13,6 +13,7 @@ import {
   faClose,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useParams } from "react-router-dom";
+import Modal from "react-modal";
 
 function UpdateMember() {
   const [avatar, setAvatar] = useState(null);
@@ -30,13 +31,14 @@ function UpdateMember() {
   });
 
   const { id } = useParams();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     axios
       .get(`http://localhost:8080/viewMember/${id}`)
       .then((res) => {
+        setDataImage(res.data);
         const memberData = res.data;
-        console.log(res.data.birthdate);
         if (memberData) {
           setFormData({
             fname: memberData.fname || "",
@@ -52,7 +54,6 @@ function UpdateMember() {
       .catch((err) => console.log(err));
   }, [id]);
 
-  // Corrected formattedData
   useEffect(() => {
     if (formData.birthdate) {
       const birthdate = new Date(formData.birthdate);
@@ -72,37 +73,61 @@ function UpdateMember() {
     setAvatar(e.target.files[0]);
   };
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:8080/users")
-      .then((res) => {
-        setDataImage(res.data[0]); // Assuming res.data is an array and you want to set the state with the first element
-        console.log(res);
-      })
-      .catch((err) => console.log(err));
-  }, []);
-
-  const handleUpdate = (e) => {
-    const imagedata = new FormData();
-    imagedata.append("image", avatar);
-    axios
-      .post("http://localhost:8080/uploadProfile", imagedata)
-      .then((res) => {
-        if (res.data.Status === "Success") {
-          console.log("WHat the nice!");
-        } else {
-          console.log("Failed");
-        }
-      })
-      .catch((err) => console.log(err));
+  const handleUpdate = async (e) => {
     e.preventDefault();
 
-    axios
-      .put(`http://localhost:8080/updateMember/${id}`, {
-        data: formData,
-      })
-      .then((res) => {
-        if (res.data.updated) {
+    try {
+      if (avatar) {
+        const imagedata = new FormData();
+        imagedata.append("file", avatar);
+
+        const imageResponse = await axios.put(
+          `http://localhost:8080/uploadProfile/${id}`,
+          imagedata
+        );
+
+        if (imageResponse.data.status === "Success") {
+          console.log("Image upload successful!");
+          const memberResponse = await axios.get(
+            `http://localhost:8080/viewMember/${id}`
+          );
+          const memberData = memberResponse.data;
+
+          setDataImage(memberData);
+
+          const updatedMemberResponse = await axios.put(
+            `http://localhost:8080/updateMember/${id}`,
+            {
+              data: formData,
+            }
+          );
+
+          if (updatedMemberResponse.data.updated) {
+            toast.success("Updated successfully! 👌", {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          } else {
+            toast.error("Update failed");
+          }
+        } else {
+          console.log("Image upload failed");
+        }
+      } else {
+        const updatedMemberResponse = await axios.put(
+          `http://localhost:8080/updateMember/${id}`,
+          {
+            data: formData,
+          }
+        );
+
+        if (updatedMemberResponse.data.updated) {
           toast.success("Updated successfully! 👌", {
             position: "top-right",
             autoClose: 2000,
@@ -116,10 +141,19 @@ function UpdateMember() {
         } else {
           toast.error("Update failed");
         }
-      })
-      .catch((error) => {
-        toast.error("Error updating member");
-      });
+      }
+    } catch (error) {
+      console.error("Error updating member", error);
+      toast.error("Error updating member");
+    }
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -137,13 +171,15 @@ function UpdateMember() {
             <div className="Avatar flex justify-center">
               {avatarUrl && (
                 <img
+                  key={dataImage.user_id}
                   className="rounded-full ring-2 ring-gray-300 w-32 h-32 dark:ring-gray-500 p-1"
                   src={
                     dataImage.profile_pic_url
-                      ? `http://localhost:8080/profilepics/${dataImage.profile_pic_url}`
+                      ? `http://localhost:8080/profilepics/${dataImage.user_id}/${dataImage.profile_pic_url}`
                       : avatarUrl
                   }
                   alt="Selected Avatar"
+                  onClick={openModal}
                 />
               )}
             </div>
@@ -239,7 +275,7 @@ function UpdateMember() {
                       setBirthDate(date);
                       setFormData({
                         ...formData,
-                        birthdate: date, // Store the Date object directly
+                        birthdate: date,
                       });
                     }}
                     placeholderText="Click to select a date"
@@ -262,7 +298,7 @@ function UpdateMember() {
                   <select
                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     id="grid-position"
-                    name="gender" // Corrected attribute name here
+                    name="gender"
                     value={formData.gender}
                     onChange={(e) =>
                       setFormData({
@@ -290,7 +326,7 @@ function UpdateMember() {
                   <select
                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     id="grid-position"
-                    name="position" // Corrected attribute name here
+                    name="position"
                     value={formData.position}
                     onChange={(e) =>
                       setFormData({
@@ -322,7 +358,7 @@ function UpdateMember() {
                   <select
                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     id="grid-last-name"
-                    name="category" // Corrected attribute name here
+                    name="category"
                     value={formData.category}
                     onChange={(e) =>
                       setFormData({
@@ -353,6 +389,29 @@ function UpdateMember() {
           </form>
         </div>
       </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        className="Modal"
+        overlayClassName="Overlay">
+        {/* Modal Content Here */}
+        <div className="text-center relative z-10">
+          <img
+            key={dataImage.user_id}
+            className="rounded-full ring-2 ring-gray-96 w-96 h-96 dark:ring-gray-500 p-1 relative inline-block shadow-2xl"
+            src={
+              dataImage.profile_pic_url
+                ? `http://localhost:8080/profilepics/${dataImage.user_id}/${dataImage.profile_pic_url}`
+                : avatarUrl
+            }
+            alt="Selected Avatar"
+          />
+          <button onClick={closeModal} className="absolute left-0 right-0">
+            <FontAwesomeIcon className="text-3xl  text-white" icon={faClose} />
+          </button>
+        </div>
+      </Modal>
     </>
   );
 }
