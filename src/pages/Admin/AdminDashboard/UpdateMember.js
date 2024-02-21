@@ -32,6 +32,7 @@ function UpdateMember() {
 
   const { id } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  Modal.setAppElement("#root");
 
   useEffect(() => {
     axios

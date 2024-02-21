@@ -91,23 +91,18 @@ function Registration() {
   // Determine whether to show the right arrow
   const showRightArrow = currentBatch < totalBatches && endPage < totalBatches;
 
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/users")
+      .then((res) => {
+        setDataImage(res.data); // Assuming res.data is an array and you want to set the state with the first element
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   const handleInsertData = async (e) => {
     e.preventDefault();
     setErrors(validateValues(formData));
-
-    const imagedata = new FormData();
-    imagedata.append("file", avatar);
-
-    axios
-      .post("http://localhost:8080/uploadProfilePic", imagedata)
-      .then((res) => {
-        if (res.data.Status === "Success") {
-          console.log("NICE!!!");
-        } else {
-          console.log("Bobo!!");
-        }
-      })
-      .catch((err) => console.log(err));
 
     // Adjust the date to the local time zone
     const localBirthDate = birthDate
@@ -119,45 +114,49 @@ function Registration() {
       ? localBirthDate.toISOString().split("T")[0]
       : "";
 
+    const imagedata = new FormData();
+    imagedata.append("file", avatar);
+    imagedata.append("fname", formData.fname);
+    imagedata.append("mname", formData.mname);
+    imagedata.append("lname", formData.lname);
+    imagedata.append("gender", formData.gender);
+    imagedata.append("birthdate", formattedBirthdate);
+    imagedata.append("category", formData.category);
+    imagedata.append("position", formData.position);
+
     try {
-      const response = await axios.post("http://localhost:8080/addMember", {
-        data: {
-          fname: formData.fname,
-          lname: formData.lname,
-          mname: formData.mname,
-          gender: formData.gender,
-          birthdate: formattedBirthdate,
-          category: formData.category,
-          position: formData.position,
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:8080/addMember",
+        imagedata
+      );
 
-      toast.success("Member Added successfully! 👌", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-      console.log(response.data);
+      if (response.data.message === "Data inserted successfully") {
+        toast.success("Member Added successfully! 👌", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
 
-      // Clear input fields after successful insertion
-      setFormData({
-        fname: "",
-        mname: "",
-        lname: "",
-        gender: "",
-        birthdate: "",
-        category: "",
-        position: "",
-      });
-      setBirthDate(null);
+        // Clear input fields after successful insertion
+        setFormData({
+          fname: "",
+          mname: "",
+          lname: "",
+          gender: "",
+          birthdate: "",
+          category: "",
+          position: "",
+        });
+        setBirthDate(null);
 
-      // Fetch the updated data
-      fetchData();
+        // Fetch the updated data
+        fetchData();
+      }
     } catch (error) {
       if (error.response && error.response.status === 409) {
         // Data already exists, display a warning
@@ -281,16 +280,6 @@ function Registration() {
     }
     return errors;
   };
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:8080/users")
-      .then((res) => {
-        setDataImage(res.data[0]); // Assuming res.data is an array and you want to set the state with the first element
-        console.log("here", res);
-      })
-      .catch((err) => console.log(err));
-  }, []);
 
   return (
     <>

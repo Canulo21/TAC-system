@@ -9,6 +9,23 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/profilepics");
+  },
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname + "_" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+
+const upload = multer({
+  storage: storage,
+});
+app.use("/profilepics/:id", express.static("public/profilepics"));
+
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -45,88 +62,106 @@ app.get("/gender", (req, res) => {
 });
 
 // Registration of members
-app.post("/addMember", (req, res) => {
-  const { data } = req.body; // Destructure 'data' from req.body
+app.post("/addMember", upload.single("file"), async (req, res) => {
+  try {
+    const { fname, mname, lname, gender, birthdate, category, position } =
+      req.body;
+    const profile_pic_url = req.file ? req.file.filename : null; // Check if a file was uploaded
 
-  const { fname, mname, lname, gender, birthdate, category, position } = data;
+    if (!fname || !lname || !gender || !birthdate || !category || !position) {
+      return res.status(400).json({
+        error: "Bad Request",
+        details: "All fields are required",
+      });
+    }
 
-  if (!fname || !lname || !gender || !birthdate || !category || !position) {
-    return res.status(400).json({
-      error: "Bad Request",
-      details: "All fields are required",
-    });
-  }
+    // Check if the full name is already registered
+    const fullnameQuery =
+      "SELECT * FROM users WHERE CONCAT(fname, ' ', mname, ' ', lname) = ?";
 
-  // Check if the full name is already registered
-  const fullnameQuery =
-    "SELECT * FROM users WHERE CONCAT(fname, ' ', mname, ' ', lname) = ?";
-
-  db.query(
-    fullnameQuery,
-    [`${fname} ${mname} ${lname}`],
-    (fullnameErr, existingUsers) => {
-      if (fullnameErr) {
-        console.error("Error checking existing data:", fullnameErr);
-        res.status(500).json({
-          error: "Internal Server Error",
-          details: fullnameErr.message,
-        });
-      } else {
-        if (existingUsers.length > 0) {
-          // Full name is already registered
-          console.log("Data is already registered!");
-          res.status(409).json({ error: "Data already exists" });
+    db.query(
+      fullnameQuery,
+      [`${fname} ${mname} ${lname}`],
+      (fullnameErr, existingUsers) => {
+        if (fullnameErr) {
+          console.error("Error checking existing data:", fullnameErr);
+          res.status(500).json({
+            error: "Internal Server Error",
+            details: fullnameErr.message,
+          });
         } else {
-          // Proceed with the insertion logic
-          const insertQuery =
-            "INSERT INTO users (fname, mname, lname, gender, birthdate, category, position) VALUES (?, ?, ?, ?, ?, ?, ?)";
+          if (existingUsers.length > 0) {
+            // Full name is already registered
+            console.log("Data is already registered!");
+            res.status(409).json({ error: "Data already exists" });
+          } else {
+            // Proceed with the insertion logic
+            const insertQuery =
+              "INSERT INTO users (fname, mname, lname, gender, birthdate, category, position, profile_pic_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-          db.query(
-            insertQuery,
-            [fname, mname, lname, gender, birthdate, category, position],
-            (insertErr, result) => {
-              if (insertErr) {
-                console.error("Error inserting data:", insertErr);
-                res.status(500).json({
-                  error: "Internal Server Error",
-                  details: insertErr.message,
-                });
-              } else {
-                console.log("Data inserted successfully");
+            db.query(
+              insertQuery,
+              [
+                fname,
+                mname,
+                lname,
+                gender,
+                birthdate,
+                category,
+                position,
+                profile_pic_url,
+              ],
+              (insertErr, result) => {
+                if (insertErr) {
+                  console.error("Error inserting data:", insertErr);
+                  res.status(500).json({
+                    error: "Internal Server Error",
+                    details: insertErr.message,
+                  });
+                } else {
+                  console.log("Data inserted successfully");
 
-                // After successful insertion, retrieve the last inserted ID
-                const lastInsertedId = result.insertId;
+                  // After successful insertion, retrieve the last inserted ID
+                  const lastInsertedId = result.insertId;
 
-                // Query to retrieve the inserted data in descending order based on user_id
-                const selectQuery =
-                  "SELECT * FROM users WHERE user_id = ? ORDER BY user_id DESC LIMIT 1";
-                db.query(
-                  selectQuery,
-                  [lastInsertedId],
-                  (selectErr, selectResult) => {
-                    if (selectErr) {
-                      console.error("Error retrieving data:", selectErr);
-                      res.status(500).json({
-                        error: "Internal Server Error",
-                        details: selectErr.message,
-                      });
-                    } else {
-                      const insertedData = selectResult[0];
-                      res.status(200).json({
-                        message: "Data inserted successfully",
-                        data: insertedData,
-                      });
+                  // Query to retrieve the inserted data in descending order based on user_id
+                  const selectQuery =
+                    "SELECT * FROM users WHERE user_id = ? ORDER BY user_id DESC LIMIT 1";
+                  db.query(
+                    selectQuery,
+                    [lastInsertedId],
+                    (selectErr, selectResult) => {
+                      if (selectErr) {
+                        console.error("Error retrieving data:", selectErr);
+                        res.status(500).json({
+                          error: "Internal Server Error",
+                          details: selectErr.message,
+                        });
+                      } else {
+                        const insertedData = selectResult[0];
+                        res.status(200).json({
+                          message: "Data inserted successfully",
+                          data: insertedData,
+                        });
+                      }
                     }
-                  }
-                );
+                  );
+                }
               }
-            }
-          );
+            );
+          }
         }
       }
-    }
-  );
+    );
+  } catch (error) {
+    console.error("Error processing request:", error);
+    res.status(500).json({
+      error: "Internal Server Error",
+      details: error.message,
+    });
+  }
 });
+
 // view a member data
 app.get("/viewMember/:id", (req, res) => {
   const memberID = req.params.id;
@@ -196,24 +231,6 @@ app.delete("/deleteMember/:id", (req, res) => {
   });
 });
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/profilepics");
-  },
-  filename: (req, file, cb) => {
-    cb(
-      null,
-      file.fieldname + "_" + Date.now() + path.extname(file.originalname)
-    );
-  },
-});
-
-const upload = multer({
-  storage: storage,
-});
-app.use("/profilepics/:id", express.static("public/profilepics"));
-app.use("/profilepics", express.static("public/profilepics"));
-
 // for edit upload image
 app.put("/uploadProfile/:id", upload.single("file"), (req, uploadRes) => {
   const userId = req.params.id;
@@ -233,17 +250,17 @@ app.put("/uploadProfile/:id", upload.single("file"), (req, uploadRes) => {
     return uploadRes.json({ status: "Success" });
   });
 });
-app.post("/uploadProfilePic", upload.single("file"), (req, res) => {
-  const image = req.file.filename;
-  const query = "INSERT INTO users (profile_pic_url) VALUES (?)";
-  db.query(query, [image], (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.json({ Message: "Error" });
-    }
-    return res.json({ Status: "Success" });
-  });
-});
+// app.post("/uploadProfilePic", upload.single("file"), (req, res) => {
+//   const image = req.file.filename;
+//   const query = "INSERT INTO users (profile_pic_url) VALUES (?)";
+//   db.query(query, [image], (err, result) => {
+//     if (err) {
+//       console.error(err);
+//       return res.json({ Message: "Error" });
+//     }
+//     return res.json({ Status: "Success" });
+//   });
+// });
 
 app.listen(8080, () => {
   console.log("Server is running on port 8080");
