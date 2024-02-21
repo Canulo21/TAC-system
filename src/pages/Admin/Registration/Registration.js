@@ -92,20 +92,22 @@ function Registration() {
   const showRightArrow = currentBatch < totalBatches && endPage < totalBatches;
 
   const handleInsertData = async (e) => {
+    e.preventDefault();
+    setErrors(validateValues(formData));
+
     const imagedata = new FormData();
-    imagedata.append("image", avatar);
+    imagedata.append("file", avatar);
+
     axios
-      .post("http://localhost:8080/uploadProfile", imagedata)
+      .post("http://localhost:8080/uploadProfilePic", imagedata)
       .then((res) => {
-        if (res.data.status === "Success") {
-          console.log("WHat the nice!");
+        if (res.data.Status === "Success") {
+          console.log("NICE!!!");
         } else {
-          console.log("Failed");
+          console.log("Bobo!!");
         }
       })
       .catch((err) => console.log(err));
-    e.preventDefault();
-    setErrors(validateValues(formData));
 
     // Adjust the date to the local time zone
     const localBirthDate = birthDate
@@ -285,7 +287,7 @@ function Registration() {
       .get("http://localhost:8080/users")
       .then((res) => {
         setDataImage(res.data[0]); // Assuming res.data is an array and you want to set the state with the first element
-        console.log(res);
+        console.log("here", res);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -410,14 +412,16 @@ function Registration() {
                 <FontAwesomeIcon icon={faClose} />
               </button>
               <div className="Avatar flex justify-center">
-                {avatarUrl && (
+                {dataImage && dataImage.profile_pic_url ? (
                   <img
                     className="rounded-full ring-2 ring-gray-300 w-32 h-32 dark:ring-gray-500 p-1"
-                    src={
-                      dataImage.profile_pic_url
-                        ? `http://localhost:8080/profilepics/${dataImage.profile_pic_url}`
-                        : avatarUrl
-                    }
+                    src={`http://localhost:8080/profilepics/${dataImage.profile_pic_url}`}
+                    alt="Selected Avatar"
+                  />
+                ) : (
+                  <img
+                    className="rounded-full ring-2 ring-gray-300 w-32 h-32 dark:ring-gray-500 p-1"
+                    src={avatarUrl}
                     alt="Selected Avatar"
                   />
                 )}

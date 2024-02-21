@@ -212,6 +212,7 @@ const upload = multer({
   storage: storage,
 });
 app.use("/profilepics/:id", express.static("public/profilepics"));
+app.use("/profilepics", express.static("public/profilepics"));
 
 // for edit upload image
 app.put("/uploadProfile/:id", upload.single("file"), (req, uploadRes) => {
@@ -232,21 +233,15 @@ app.put("/uploadProfile/:id", upload.single("file"), (req, uploadRes) => {
     return uploadRes.json({ status: "Success" });
   });
 });
-app.post("/uploadProfile", upload.single("file"), (req, uploadRes) => {
+app.post("/uploadProfilePic", upload.single("file"), (req, res) => {
   const image = req.file.filename;
-  const insertQuery = "INSERT INTO users (profilepics) VALUES (?)";
-
-  db.query(insertQuery, [image], (err, result) => {
+  const query = "INSERT INTO users (profile_pic_url) VALUES (?)";
+  db.query(query, [image], (err, result) => {
     if (err) {
       console.error(err);
-      return uploadRes.status(500).json({ Message: "Error" });
+      return res.json({ Message: "Error" });
     }
-
-    if (result.affectedRows === 0) {
-      return uploadRes.status(404).json({ Message: "User not found" });
-    }
-
-    return uploadRes.json({ status: "Success" });
+    return res.json({ Status: "Success" });
   });
 });
 
