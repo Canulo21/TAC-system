@@ -19,6 +19,13 @@ function ChurchExpenses() {
         borderColor: ["#FBFADA", "#FBFADA"],
         borderWidth: 2,
       },
+      {
+        label: "Total",
+        data: [2000, 1500],
+        backgroundColor: ["rgba(75, 192, 192, 0.9)", "rgba(75, 192, 192, 0.9)"],
+        borderColor: ["#FBFADA", "#FBFADA"],
+        borderWidth: 2,
+      },
     ],
   };
 

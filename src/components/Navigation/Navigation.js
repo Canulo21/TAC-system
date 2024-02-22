@@ -3,7 +3,6 @@ import "./Navigation.css";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faAreaChart,
   faUser,
   faDashboard,
   faUserPlus,
@@ -11,6 +10,7 @@ import {
   faCalendarCheck,
   faTimes,
   faSignOut,
+  faMoneyBill,
 } from "@fortawesome/free-solid-svg-icons";
 import MenuLogo from "../../Assets/images/menu-logo.png";
 
@@ -78,9 +78,9 @@ function Navigation() {
             <FontAwesomeIcon icon={faCalendarCheck} /> Events
           </span>
         </NavLink>
-        <NavLink to="./reports" alt="Reports">
+        <NavLink to="./financial" alt="Reports">
           <span>
-            <FontAwesomeIcon icon={faAreaChart} /> Reports
+            <FontAwesomeIcon icon={faMoneyBill} /> Financial
           </span>
         </NavLink>
         <NavLink to="/adminprofile" alt="Profile">

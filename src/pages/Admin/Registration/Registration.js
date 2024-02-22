@@ -131,7 +131,7 @@ function Registration() {
       );
 
       if (response.data.message === "Data inserted successfully") {
-        toast.success("Member Added successfully! 👌", {
+        toast.success("Member Added Successfully! 👌", {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -278,6 +278,9 @@ function Registration() {
     if (inputValues.category.trim() === "") {
       errors.category = "Choose Category";
     }
+    if (!inputValues.profile_pic_url) {
+      errors.profile_pic_url = "Provide Picture";
+    }
     return errors;
   };
 
@@ -415,11 +418,15 @@ function Registration() {
                   />
                 )}
               </div>
-
-              <div className="flex items-center flex-col mb-10 mt-10">
+              <div className="flex items-center flex-col mb-2 mt-10">
                 <input type="file" onChange={handleImage} accept="image/*" />
               </div>
-              <div className="flex flex-wrap -mx-3 mb-6">
+              {errors.profile_pic_url ? (
+                <p className="error text-red-600 font-bold text-center">
+                  {errors.profile_pic_url}
+                </p>
+              ) : null}
+              <div className="flex flex-wrap -mx-3 mb-6 mt-10">
                 <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                   <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"

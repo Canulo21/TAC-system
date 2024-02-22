@@ -5,6 +5,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard/AdminDashboard";
 import AdminProfile from "./pages/Admin/AdminProfile/AdminProfile";
 import Registration from "./pages/Admin/Registration/Registration";
 import UpdateMember from "./pages/Admin/AdminDashboard/UpdateMember";
+import ChurchFinancial from "./pages/Admin/AdminDashboard/ChurchFinancial";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/" element={<AdminDashboard />} />
             <Route path="/registration" element={<Registration />} />
             <Route path="/updateMember/:id" element={<UpdateMember />} />
+            <Route path="/financial" element={<ChurchFinancial />} />
           </Routes>
         </div>
       </div>

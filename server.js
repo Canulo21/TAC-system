@@ -68,7 +68,15 @@ app.post("/addMember", upload.single("file"), async (req, res) => {
       req.body;
     const profile_pic_url = req.file ? req.file.filename : null; // Check if a file was uploaded
 
-    if (!fname || !lname || !gender || !birthdate || !category || !position) {
+    if (
+      !fname ||
+      !lname ||
+      !gender ||
+      !birthdate ||
+      !category ||
+      !position ||
+      !profile_pic_url
+    ) {
       return res.status(400).json({
         error: "Bad Request",
         details: "All fields are required",
@@ -250,17 +258,52 @@ app.put("/uploadProfile/:id", upload.single("file"), (req, uploadRes) => {
     return uploadRes.json({ status: "Success" });
   });
 });
-// app.post("/uploadProfilePic", upload.single("file"), (req, res) => {
-//   const image = req.file.filename;
-//   const query = "INSERT INTO users (profile_pic_url) VALUES (?)";
-//   db.query(query, [image], (err, result) => {
-//     if (err) {
-//       console.error(err);
-//       return res.json({ Message: "Error" });
-//     }
-//     return res.json({ Status: "Success" });
-//   });
-// });
+
+// for financial post income
+app.post("/upMoney", (req, res) => {
+  const { up_money, date } = req.body;
+  const query = "INSERT INTO financial_up_money (up_money, date) VALUES (?, ?)";
+
+  db.query(query, [up_money, date], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ Message: "Error" });
+    }
+    return res.status(200).json({ Status: "Success" });
+  });
+});
+
+app.get("/expenses", (req, res) => {
+  const query = "SELECT * from financial_expenses";
+
+  db.query(query, (err, data) => {
+    if (err) {
+      return res.status(500).json({ Message: "Error" });
+    }
+    return res.json(data);
+  });
+});
+app.post("/exMoney", (req, res) => {
+  const { amount, used_for, date } = req.body;
+
+  if (!amount || !used_for) {
+    return res.status(400).json({
+      error: "Bad Request",
+      details: "All fields are required",
+    });
+  }
+
+  const query =
+    "INSERT INTO financial_expenses (amount, used_for, date) VALUES (?, ?, ?)";
+
+  db.query(query, [amount, used_for, date], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ Message: "Error" });
+    }
+    return res.status(200).json({ Status: "Success" });
+  });
+});
 
 app.listen(8080, () => {
   console.log("Server is running on port 8080");
