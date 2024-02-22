@@ -260,9 +260,26 @@ app.put("/uploadProfile/:id", upload.single("file"), (req, uploadRes) => {
 });
 
 // for financial post income
+app.get("/getFinancial", (req, res) => {
+  const query = "SELECT * from financial_up_money";
+
+  db.query(query, (err, data) => {
+    if (err) {
+      return res.status(500).json({ Message: "Error" });
+    }
+    return res.json(data);
+  });
+});
 app.post("/upMoney", (req, res) => {
   const { up_money, date } = req.body;
   const query = "INSERT INTO financial_up_money (up_money, date) VALUES (?, ?)";
+
+  if (!up_money) {
+    return res.status(400).json({
+      error: "Bad Request",
+      details: "All fields are required",
+    });
+  }
 
   db.query(query, [up_money, date], (err, result) => {
     if (err) {
@@ -281,6 +298,27 @@ app.get("/expenses", (req, res) => {
       return res.status(500).json({ Message: "Error" });
     }
     return res.json(data);
+  });
+});
+// view a expense data
+app.get("/viewExpenses/:id", (req, res) => {
+  const id = req.params.id;
+
+  const query = `SELECT * FROM financial_expenses WHERE id = ?`;
+
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    } else {
+      if (result.length === 0) {
+        res.status(404).json({ error: "Expenses not found" });
+      } else {
+        // Send the member data back to the client
+        res.status(200).json(result[0]);
+      }
+    }
   });
 });
 app.post("/exMoney", (req, res) => {
@@ -302,6 +340,48 @@ app.post("/exMoney", (req, res) => {
       return res.status(500).json({ Message: "Error" });
     }
     return res.status(200).json({ Status: "Success" });
+  });
+});
+
+app.delete("/deleteFinancial/:id", (req, res) => {
+  const id = req.params.id;
+
+  const query = "DELETE FROM financial_expenses WHERE id = ?";
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      console.error("Error deleting data:", err);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    } else {
+      res.status(200).json({ message: "Data deleted successfully" });
+    }
+  });
+});
+
+// for update financial expsenses
+app.put("/updateFinancial/:id", (req, res) => {
+  const id = req.params.id;
+  const { data } = req.body; // Destructure 'data' from req.body
+
+  const { amount, used_for } = data;
+  const query =
+    "UPDATE financial_expenses SET `amount`=?, `used_for`=? WHERE user_id = ?";
+
+  db.query(query, [amount, used_for, id], (queryError, result) => {
+    if (queryError) {
+      console.error("updateError", queryError);
+      return res.status(500).json({
+        error: "Failed to update expenses.",
+        details: queryError.message,
+      });
+    }
+    if (!result.affectedRows) {
+      return res.status(404).json({
+        error: "Expenses not found.",
+      });
+    }
+    return res.json({ updated: true });
   });
 });
 
