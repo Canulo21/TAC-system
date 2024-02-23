@@ -75,8 +75,8 @@ function AdminDashboard() {
                       ? kidsPic
                       : ""
                   }
-                  alt={`picture-${category}`}
-                  title={`picture-${category}`}
+                  alt={category}
+                  title={category}
                   width="50px"
                 />
               </div>

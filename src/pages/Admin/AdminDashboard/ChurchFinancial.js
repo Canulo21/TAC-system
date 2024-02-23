@@ -416,7 +416,7 @@ function ChurchFinancial() {
                 </tr>
               </thead>
               <tbody>
-                {filteredData.map((d, index) => (
+                {filteredData.slice(0, 3).map((d, index) => (
                   <tr key={index}>
                     <td className="text-center text-sm text-bold border border-slate-300 p-2 uppercase">
                       {d.amount}

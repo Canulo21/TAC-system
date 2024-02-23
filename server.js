@@ -422,6 +422,45 @@ app.put("/updateFinancial/:id", (req, res) => {
   });
 });
 
+// get the current month
+// app.get("/getExCurrentMonth", (req, res) => {
+//   const query = `
+//     SELECT
+//       CASE
+//         WHEN MONTH(CURDATE()) = 1 THEN 'January'
+//         WHEN MONTH(CURDATE()) = 2 THEN 'February'
+//         WHEN MONTH(CURDATE()) = 3 THEN 'March'
+//         WHEN MONTH(CURDATE()) = 4 THEN 'April'
+//         WHEN MONTH(CURDATE()) = 5 THEN 'May'
+//         WHEN MONTH(CURDATE()) = 6 THEN 'June'
+//         WHEN MONTH(CURDATE()) = 7 THEN 'July'
+//         WHEN MONTH(CURDATE()) = 8 THEN 'August'
+//         WHEN MONTH(CURDATE()) = 9 THEN 'September'
+//         WHEN MONTH(CURDATE()) = 10 THEN 'October'
+//         WHEN MONTH(CURDATE()) = 11 THEN 'November'
+//         WHEN MONTH(CURDATE()) = 12 THEN 'December'
+//       END AS ExCurrentMonth
+//     FROM financial_expenses
+//   `;
+
+//   db.query(query, (err, data) => {
+//     if (err) {
+//       return res.status(500).json({ Message: "Error" });
+//     }
+
+//     // Check if there are rows returned
+//     if (data.length === 0) {
+//       return res.json({ ExCurrentMonth: null });
+//     }
+
+//     // Access the ExCurrentMonth using data[0].ExCurrentMonth
+//     const ExCurrentMonth = data[0].ExCurrentMonth;
+//     console.log(ExCurrentMonth);
+
+//     return res.json({ ExCurrentMonth });
+//   });
+// });
+
 app.listen(8080, () => {
   console.log("Server is running on port 8080");
 });

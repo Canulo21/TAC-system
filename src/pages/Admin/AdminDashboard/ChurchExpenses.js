@@ -6,6 +6,7 @@ function ChurchExpenses() {
   const [total, setTotal] = useState("");
   const [totalIncome, setTotalIncome] = useState("");
   const [totalExpenses, setTotalExpenses] = useState("");
+  const [filter, setFilter] = useState([]);
 
   const getTotalIncome = async () => {
     try {
@@ -27,6 +28,29 @@ function ChurchExpenses() {
     }
   };
 
+  const getFilterByMonth = async () => {
+    const getCurrentMonth = new Date().toLocaleString([], {
+      month: "long",
+    });
+
+    // Set the filter as an array with a single element
+    setFilter([getCurrentMonth]);
+  };
+
+  const getFilterByYearAndMonths = async () => {
+    // Get the current year
+    const currentYear = new Date().getFullYear();
+
+    // Create an array of all months
+    const allMonths = Array.from({ length: 12 }, (_, index) => {
+      const monthDate = new Date(currentYear, index, 1);
+      return monthDate.toLocaleString([], { month: "long" });
+    });
+
+    // Set the filter with the array of all months
+    setFilter(allMonths.map((month) => [month])); // Ensure each month is wrapped in an array
+  };
+
   useEffect(() => {
     getTotalIncome();
     getTotalExpenses();
@@ -40,7 +64,7 @@ function ChurchExpenses() {
   }, [totalIncome, totalExpenses]);
 
   const data = {
-    labels: ["January"],
+    labels: filter,
     datasets: [
       {
         label: "Income",
@@ -103,6 +127,18 @@ function ChurchExpenses() {
   return (
     <div className="text-center">
       <h3>Church Financial status</h3>
+      <div className="btn-holder flex gap-2 pt-2">
+        <button
+          className="bg-[#FBFADA] px-2 py-1 text-xs rounded-md"
+          onClick={getFilterByMonth}>
+          Current Month
+        </button>
+        <button
+          className="bg-[#FBFADA] px-2 py-1 text-xs rounded-md"
+          onClick={getFilterByYearAndMonths}>
+          Current Year
+        </button>
+      </div>
       <div className="pt-5" style={{ width: "1000px", height: "500px" }}>
         <Bar data={data} options={chartOptions} />
       </div>
