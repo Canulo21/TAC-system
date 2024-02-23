@@ -261,7 +261,7 @@ app.put("/uploadProfile/:id", upload.single("file"), (req, uploadRes) => {
 
 // for financial post income
 app.get("/getFinancial", (req, res) => {
-  const query = "SELECT * from financial_up_money";
+  const query = "SELECT * from financial_up_money ORDER BY id DESC";
 
   db.query(query, (err, data) => {
     if (err) {
@@ -290,8 +290,24 @@ app.post("/upMoney", (req, res) => {
   });
 });
 
+app.get("/getTotalIncome", (req, res) => {
+  const query = "SELECT SUM(up_money) AS totalIncome FROM financial_up_money";
+
+  db.query(query, (err, data) => {
+    if (err) {
+      return res.status(500).json({ Message: "Error" });
+    }
+
+    // The result is an array of objects. Access the totalIncome using data[0].totalIncome
+    const totalIncome = data[0].totalIncome;
+
+    return res.json({ totalIncome });
+  });
+});
+
+// for expesnes
 app.get("/expenses", (req, res) => {
-  const query = "SELECT * from financial_expenses";
+  const query = "SELECT * from financial_expenses ORDER BY id DESC ";
 
   db.query(query, (err, data) => {
     if (err) {
@@ -300,6 +316,21 @@ app.get("/expenses", (req, res) => {
     return res.json(data);
   });
 });
+app.get("/getTotalExpenses", (req, res) => {
+  const query = "SELECT SUM(amount) AS totalExpenses FROM financial_expenses";
+
+  db.query(query, (err, data) => {
+    if (err) {
+      return res.status(500).json({ Message: "Error" });
+    }
+
+    // The result is an array of objects. Access the totalExpenses using data[0].totalExpenses
+    const totalExpenses = data[0].totalExpenses;
+
+    return res.json({ totalExpenses });
+  });
+});
+
 // view a expense data
 app.get("/viewExpenses/:id", (req, res) => {
   const id = req.params.id;

@@ -16,6 +16,7 @@ import {
   faClose,
   faArrowLeftLong,
   faArrowRightLong,
+  faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 
@@ -25,6 +26,8 @@ function Registration() {
   const [avatarUrl, setAvatarUrl] = useState(avatarProfile);
   const [birthDate, setBirthDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [filteredData, setFilteredData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [dataImage, setDataImage] = useState([]);
   const [formData, setFormData] = useState({
@@ -71,10 +74,27 @@ function Registration() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const newFilteredData = data.filter(
+      (d) =>
+        d.fname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        d.mname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        d.lname.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    setFilteredData(newFilteredData);
+
+    setCurrentPage(1);
+  }, [searchTerm, data]);
+
   const getSlicedData = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return data.slice(startIndex, endIndex);
+
+    // Return filteredData if it exists, otherwise return the original data
+    return filteredData.length > 0
+      ? filteredData.slice(startIndex, endIndex)
+      : data.slice(startIndex, endIndex);
   };
 
   // Pagination controls
@@ -289,7 +309,17 @@ function Registration() {
       <div className="relative">
         <h1>Registration</h1>
         <ToastContainer />
-        <table className="table-auto mt-10 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5">
+        <div className="search-holder flex items-center gap-2 mt-10">
+          <FontAwesomeIcon className="text-white text-xl" icon={faSearch} />
+          <input
+            type="text"
+            placeholder="Search by Name"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+          />
+        </div>
+        <table className="table-auto mt-2 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5">
           <thead className="bg-[#ADBC9F]">
             <tr>
               <th className="border border-slate-300 p-2">Id</th>

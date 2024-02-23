@@ -5,7 +5,8 @@ import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { Pagination } from "react-bootstrap";
 
 function ChurchFinancial() {
   const [data, setData] = useState([]);
@@ -235,22 +236,41 @@ function ChurchFinancial() {
     }
   };
 
+  const [searchDate, setSearchDate] = useState("");
+
+  const handleSearch = (event) => {
+    setSearchDate(event.target.value);
+  };
+
+  const filteredFinancial = financial.filter((d) =>
+    d.date.toLowerCase().includes(searchDate.toLowerCase())
+  );
+
+  const [searchExDate, setSearchExDate] = useState("");
+
+  const handleSearchExpenses = (event) => {
+    setSearchExDate(event.target.value);
+  };
+
+  const filteredData = data.filter((d) =>
+    d.date.toLowerCase().includes(searchExDate.toLowerCase())
+  );
+
   return (
     <>
       <div className="text-center">
-        <h1>Financial Management</h1>
         <ToastContainer />
       </div>
       <div className="mt-2">
-        <div className="card-holder p-5 mb-5">
+        <div className="card-holder pt-5 pb-2 px-5 mb-5">
           <h3>Income</h3>
           <div className="form-holder">
             <form>
-              <div className="flex flex-wrap items-center justify-center gap-5 pt-5 pb-5">
+              <div className="flex flex-wrap items-center justify-center gap-5 pt-2 pb-5">
                 <label className="text-xl text-bold">Amount:</label>
                 <div className=" w-1/4">
                   <input
-                    className="appearance-none block  w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    className="appearance-none block  w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     type="number"
                     name="up_money"
                     value={upMoney}
@@ -272,6 +292,17 @@ function ChurchFinancial() {
             </form>
           </div>
           <div className="table-holder">
+            <div className="search-holder flex items-center gap-2">
+              <FontAwesomeIcon icon={faSearch} />
+              <input
+                type="text"
+                placeholder="Search by Date"
+                value={searchDate}
+                onChange={handleSearch}
+                className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              />
+            </div>
+
             <table className="table-auto mt-1 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5">
               <thead>
                 <tr>
@@ -281,16 +312,29 @@ function ChurchFinancial() {
                   <th className="border border-slate-300 p-2 bg-[#adbc9f]">
                     Date
                   </th>
+                  <th className="border border-slate-300 p-2 bg-[#adbc9f]">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {financial.map((d, index) => (
+                {filteredFinancial.slice(0, 3).map((d, index) => (
                   <tr key={index}>
                     <td className="text-center text-sm text-bold border border-slate-300 p-2 uppercase">
                       {d.up_money}
                     </td>
                     <td className="text-center text-sm text-bold border border-slate-300 p-2 uppercase">
                       {d.date}
+                    </td>
+                    <td className="border border-slate-300 p-2">
+                      <div className="flex gap-2 justify-center">
+                        <Link
+                          className="bg-green-500 text-white text-sm py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#12372a]"
+                          to={`#`}>
+                          <FontAwesomeIcon icon={faEdit} />
+                          Edit
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -302,11 +346,11 @@ function ChurchFinancial() {
           <h3>Expenses</h3>
           <div className="form-holder">
             <form>
-              <div className="flex flex-wrap items-center justify-center gap-5 pt-5 pb-5">
+              <div className="flex flex-wrap items-center justify-center gap-5 pt-2 pb-5">
                 <label className="text-xl text-bold">Amount:</label>
                 <div className="w-1/4">
                   <input
-                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     type="number"
                     name="amount"
                     value={exMoney}
@@ -321,7 +365,7 @@ function ChurchFinancial() {
                 <label className="text-xl text-bold">Purpose:</label>
                 <div className="w-1/4 relative">
                   <input
-                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     type="text"
                     name="used_for"
                     value={useFor}
@@ -344,6 +388,16 @@ function ChurchFinancial() {
             </form>
           </div>
           <div className="table-holder">
+            <div className="search-holder flex items-center gap-2">
+              <FontAwesomeIcon icon={faSearch} />
+              <input
+                type="text"
+                placeholder="Search by Date"
+                value={searchExDate}
+                onChange={handleSearchExpenses}
+                className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              />
+            </div>
             <table className="table-auto mt-1 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5">
               <thead>
                 <tr>
@@ -362,7 +416,7 @@ function ChurchFinancial() {
                 </tr>
               </thead>
               <tbody>
-                {data.map((d, index) => (
+                {filteredData.map((d, index) => (
                   <tr key={index}>
                     <td className="text-center text-sm text-bold border border-slate-300 p-2 uppercase">
                       {d.amount}
@@ -376,13 +430,13 @@ function ChurchFinancial() {
                     <td className="border border-slate-300 p-2">
                       <div className="flex gap-2 justify-center">
                         <Link
-                          className="bg-green-500 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#12372a]"
+                          className="bg-green-500 text-white text-sm py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#12372a]"
                           to={`/updateFinancial/${d.id}`}>
                           <FontAwesomeIcon icon={faEdit} />
                           Edit
                         </Link>
                         <button
-                          className="bg-red-500 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#a93737]"
+                          className="bg-red-500 text-white text-sm py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#a93737]"
                           onClick={() => handleDelete(d.id)}>
                           <FontAwesomeIcon icon={faTrash} />
                           Delete

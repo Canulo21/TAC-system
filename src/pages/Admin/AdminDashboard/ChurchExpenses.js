@@ -1,27 +1,64 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { Bar } from "react-chartjs-2";
 
 function ChurchExpenses() {
+  const [total, setTotal] = useState("");
+  const [totalIncome, setTotalIncome] = useState("");
+  const [totalExpenses, setTotalExpenses] = useState("");
+
+  const getTotalIncome = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/getTotalIncome`);
+      setTotalIncome(response.data.totalIncome);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getTotalExpenses = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/getTotalExpenses`
+      );
+      setTotalExpenses(response.data.totalExpenses);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getTotalIncome();
+    getTotalExpenses();
+  }, []);
+
+  useEffect(() => {
+    if (totalIncome !== "" && totalExpenses !== "") {
+      const calculatedTotal = totalIncome - totalExpenses;
+      setTotal(calculatedTotal);
+    }
+  }, [totalIncome, totalExpenses]);
+
   const data = {
-    labels: ["January", "Febuary"],
+    labels: ["January"],
     datasets: [
       {
         label: "Income",
-        data: [3000, 1000],
+        data: [totalIncome],
         backgroundColor: ["rgba(54, 162, 235, 0.9)", "rgba(54, 162, 235, 0.9)"],
         borderColor: ["#FBFADA", "#FBFADA"],
         borderWidth: 2,
       },
       {
         label: "Expenses",
-        data: [2000, 1500],
+        data: [totalExpenses],
         backgroundColor: ["rgba(255, 99, 132, 0.9)", "rgba(255, 99, 132, 0.9)"],
         borderColor: ["#FBFADA", "#FBFADA"],
         borderWidth: 2,
       },
       {
         label: "Total",
-        data: [2000, 1500],
+        data: [total],
         backgroundColor: ["rgba(75, 192, 192, 0.9)", "rgba(75, 192, 192, 0.9)"],
         borderColor: ["#FBFADA", "#FBFADA"],
         borderWidth: 2,
