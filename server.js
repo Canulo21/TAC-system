@@ -363,10 +363,16 @@ app.delete("/deleteFinancial/:id", (req, res) => {
 app.put("/updateFinancial/:id", (req, res) => {
   const id = req.params.id;
   const { data } = req.body; // Destructure 'data' from req.body
-
   const { amount, used_for } = data;
-  const query =
-    "UPDATE financial_expenses SET `amount`=?, `used_for`=? WHERE user_id = ?";
+
+  if (!amount || !used_for) {
+    return res.status(400).json({
+      error: "Bad Request",
+      details: "All fields are required",
+    });
+  }
+
+  const query = "UPDATE financial_expenses SET amount=?, used_for=? WHERE id=?";
 
   db.query(query, [amount, used_for, id], (queryError, result) => {
     if (queryError) {
