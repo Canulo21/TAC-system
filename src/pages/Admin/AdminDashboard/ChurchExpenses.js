@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Bar } from "react-chartjs-2";
+import "./ChurchFinancial.css";
 
 function ChurchExpenses() {
   const [total, setTotal] = useState("");
@@ -8,23 +9,29 @@ function ChurchExpenses() {
   const [totalExpenses, setTotalExpenses] = useState("");
   const [filter, setFilter] = useState([]);
 
-  const getTotalIncome = async () => {
+  const getTotalIncome = async (month) => {
     try {
-      const response = await axios.get(`http://localhost:8080/getTotalIncome`);
-      setTotalIncome(response.data.totalIncome);
+      const response = await axios.get(
+        `http://localhost:8080/getTotalIncome?month=${month}`
+      );
+      const totalIncomeArray = response.data.map((item) => item.totalIncome);
+      setTotalIncome(totalIncomeArray);
     } catch (err) {
       console.log(err);
     }
   };
 
-  const getTotalExpenses = async () => {
+  const getTotalExpenses = async (month) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/getTotalExpenses`
+        `http://localhost:8080/getTotalExpenses?month=${month}`
       );
-      setTotalExpenses(response.data.totalExpenses);
+      const totalExpensesArray = response.data.map(
+        (item) => item.totalExpenses
+      );
+      setTotalExpenses(totalExpensesArray);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
@@ -35,6 +42,10 @@ function ChurchExpenses() {
 
     // Set the filter as an array with a single element
     setFilter([getCurrentMonth]);
+
+    // Fetch data for the current month
+    await getTotalIncome(getCurrentMonth);
+    await getTotalExpenses(getCurrentMonth);
   };
 
   const getFilterByYearAndMonths = async () => {
@@ -52,14 +63,19 @@ function ChurchExpenses() {
   };
 
   useEffect(() => {
-    getTotalIncome();
-    getTotalExpenses();
-  }, []);
+    // Fetch default data for the current month
+    getFilterByMonth();
+  }, []); // Empty dependency array to run only once when the component mounts
 
   useEffect(() => {
-    if (totalIncome !== "" && totalExpenses !== "") {
-      const calculatedTotal = totalIncome - totalExpenses;
-      setTotal(calculatedTotal);
+    if (totalIncome.length > 0 && totalExpenses.length > 0) {
+      // Calculate the total income and total expenses for each month
+      const monthlyTotals = totalIncome.map(
+        (income, index) => income - totalExpenses[index]
+      );
+
+      // Set total as an array containing the total for each month
+      setTotal(monthlyTotals);
     }
   }, [totalIncome, totalExpenses]);
 
@@ -68,21 +84,21 @@ function ChurchExpenses() {
     datasets: [
       {
         label: "Income",
-        data: [totalIncome],
+        data: totalIncome,
         backgroundColor: ["rgba(54, 162, 235, 0.9)", "rgba(54, 162, 235, 0.9)"],
         borderColor: ["#FBFADA", "#FBFADA"],
         borderWidth: 2,
       },
       {
         label: "Expenses",
-        data: [totalExpenses],
+        data: totalExpenses,
         backgroundColor: ["rgba(255, 99, 132, 0.9)", "rgba(255, 99, 132, 0.9)"],
         borderColor: ["#FBFADA", "#FBFADA"],
         borderWidth: 2,
       },
       {
         label: "Total",
-        data: [total],
+        data: total,
         backgroundColor: ["rgba(75, 192, 192, 0.9)", "rgba(75, 192, 192, 0.9)"],
         borderColor: ["#FBFADA", "#FBFADA"],
         borderWidth: 2,
@@ -139,7 +155,7 @@ function ChurchExpenses() {
           Current Year
         </button>
       </div>
-      <div className="pt-5" style={{ width: "1000px", height: "500px" }}>
+      <div className="pt-5 charts" style={{ width: "100%", height: "auto" }}>
         <Bar data={data} options={chartOptions} />
       </div>
     </div>

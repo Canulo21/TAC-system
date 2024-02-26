@@ -94,11 +94,11 @@ function AdminDashboard() {
           ))}
         </div>
       </div>
-      <div className="middle-part flex justify-between pt-14">
-        <div className="p-5 border-2 border-green-50 rounded-xl ">
+      <div className="middle-part flex justify-between pt-14 gap-5">
+        <div className="p-5 border-2 border-green-50 rounded-xl w-full">
           <ChurchExpenses />
         </div>
-        <div className="p-5 border-2 border-green-50 rounded-xl">
+        <div className="p-5 border-2 border-green-50 rounded-xl w-1/3">
           <ChurchPopulation />
         </div>
       </div>
