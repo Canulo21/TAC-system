@@ -6,6 +6,7 @@ import youngPeoplePic from "../../../Assets/images/yp.png";
 import kidsPic from "../../../Assets/images/kid.png";
 import ChurchPopulation from "./ChurchPopulation";
 import ChurchExpenses from "./ChurchExpenses";
+import ChurchEvents from "./ChurchEvents";
 
 function AdminDashboard() {
   const [categoryCounts, setCategoryCounts] = useState({
@@ -94,13 +95,16 @@ function AdminDashboard() {
           ))}
         </div>
       </div>
-      <div className="middle-part flex justify-between pt-14 gap-5">
-        <div className="p-5 border-2 border-green-50 rounded-xl w-full">
+      <div className="middle-part flex justify-between pt-5 gap-5">
+        <div className="p-5 border-2 border-green-50 rounded-xl w-4/5">
           <ChurchExpenses />
         </div>
         <div className="p-5 border-2 border-green-50 rounded-xl w-1/3">
           <ChurchPopulation />
         </div>
+      </div>
+      <div className="p-5 border-2 border-green-50 rounded-xl mt-5 w-3/5">
+        <ChurchEvents />
       </div>
     </>
   );

@@ -423,6 +423,64 @@ app.put("/updateFinancial/:id", (req, res) => {
   });
 });
 
+// for events
+app.get("/getEvents", (req, res) => {
+  const query = "SELECT * from events ORDER BY id DESC";
+
+  db.query(query, (err, data) => {
+    if (err) {
+      return res.status(500).json({ Message: "Error" });
+    }
+    return res.json(data);
+  });
+});
+app.get("/getEventsBoard", (req, res) => {
+  const query = "SELECT * FROM EVENTS WHERE STATUS = 'Post' ORDER BY id DESC";
+
+  db.query(query, (err, data) => {
+    if (err) {
+      return res.status(500).json({ Message: "Error" });
+    }
+    return res.json(data);
+  });
+});
+app.post("/addEvent", (req, res) => {
+  const { title, location, date, status } = req.body;
+
+  if (!title || !location || !date || !status) {
+    return res.status(400).json({
+      error: "Bad Request",
+      details: "All fields are required",
+    });
+  }
+
+  const query =
+    "INSERT INTO events (title, location, status, date) VALUES (?, ?, ?, ?)";
+
+  db.query(query, [title, location, status, date], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ Message: "Error" });
+    }
+    return res.status(200).json({ Status: "Success" });
+  });
+});
+app.delete("/deleteEvent/:id", (req, res) => {
+  const id = req.params.id;
+
+  const query = "DELETE FROM events WHERE id = ?";
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      console.error("Error deleting data:", err);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    } else {
+      res.status(200).json({ message: "Data deleted successfully" });
+    }
+  });
+});
+
 app.listen(8080, () => {
   console.log("Server is running on port 8080");
 });

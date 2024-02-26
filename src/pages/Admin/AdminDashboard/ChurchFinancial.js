@@ -265,7 +265,7 @@ function ChurchFinancial() {
           <h3>Income</h3>
           <div className="form-holder">
             <form>
-              <div className="flex flex-wrap items-center justify-center gap-5 pt-2 pb-5">
+              <div className="flex flex-wrap items-center justify-center gap-5 pt-2 pb-5 ">
                 <label className="text-xl text-bold">Amount:</label>
                 <div className=" w-1/4">
                   <input

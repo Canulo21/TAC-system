@@ -7,6 +7,7 @@ import Registration from "./pages/Admin/Registration/Registration";
 import UpdateMember from "./pages/Admin/AdminDashboard/UpdateMember";
 import ChurchFinancial from "./pages/Admin/AdminDashboard/ChurchFinancial";
 import UpdateChurchFinancial from "./pages/Admin/AdminDashboard/UpdateChurchFinancial";
+import ChurchAddEvents from "./pages/Admin/AdminDashboard/ChurchAddEvents";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
               path="/updateFinancial/:id"
               element={<UpdateChurchFinancial />}
             />
+            <Route path="/events" element={<ChurchAddEvents />} />
           </Routes>
         </div>
       </div>

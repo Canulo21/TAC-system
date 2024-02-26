@@ -21,8 +21,7 @@ tbody tr:hover {
   background-color: #d6e3ca;
 }
 
-/* chartjs css */
-/* .charts canvas {
-   width: 100% !important;
-   height: auto !important;
-} */
+.btn:hover,
+.btn.active {
+  background: #fffa5e;
+}

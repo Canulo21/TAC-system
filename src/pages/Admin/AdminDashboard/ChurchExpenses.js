@@ -8,6 +8,9 @@ function ChurchExpenses() {
   const [totalIncome, setTotalIncome] = useState("");
   const [totalExpenses, setTotalExpenses] = useState("");
   const [filter, setFilter] = useState([]);
+  const [coh, setCoh] = useState("");
+  const [toggleCurrentMonth, setToggleCurrentMonth] = useState(false);
+  const [toggleCurrentYear, setToggleCurrentYear] = useState(false);
 
   const getTotalIncome = async (month) => {
     try {
@@ -46,20 +49,34 @@ function ChurchExpenses() {
     // Fetch data for the current month
     await getTotalIncome(getCurrentMonth);
     await getTotalExpenses(getCurrentMonth);
+
+    setToggleCurrentMonth(!toggleCurrentMonth);
+    setToggleCurrentYear(false); // Ensure the other toggle is set to false
   };
 
   const getFilterByYearAndMonths = async () => {
-    // Get the current year
-    const currentYear = new Date().getFullYear();
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/getTotalExpenses"
+      );
 
-    // Create an array of all months
-    const allMonths = Array.from({ length: 12 }, (_, index) => {
-      const monthDate = new Date(currentYear, index, 1);
-      return monthDate.toLocaleString([], { month: "long" });
-    });
+      const currentYear = new Date().getFullYear(); // Get the current year
 
-    // Set the filter with the array of all months
-    setFilter(allMonths.map((month) => [month])); // Ensure each month is wrapped in an array
+      const monthArray = response.data.map((item) => {
+        const numericMonth = item.MONTH;
+        const monthString = new Date(
+          currentYear,
+          numericMonth - 1,
+          1
+        ).toLocaleString("en-US", { month: "long" });
+        return monthString;
+      });
+      setToggleCurrentYear(!toggleCurrentYear);
+      setToggleCurrentMonth(false);
+      setFilter(monthArray);
+    } catch (err) {
+      // Handle errors here
+    }
   };
 
   useEffect(() => {
@@ -68,6 +85,31 @@ function ChurchExpenses() {
   }, []); // Empty dependency array to run only once when the component mounts
 
   useEffect(() => {
+    if (totalIncome === undefined || totalExpenses === undefined) {
+      return;
+    }
+
+    if (!Array.isArray(totalIncome) || !Array.isArray(totalExpenses)) {
+      console.error("totalIncome or totalExpenses is not an array");
+      return;
+    }
+
+    if (totalIncome.length !== totalExpenses.length) {
+      console.error("totalIncome and totalExpenses lengths are not equal");
+      return;
+    }
+
+    const sumOfTotalIncome = totalIncome.reduce(
+      (acc, income) => acc + income,
+      0
+    );
+    const sumOfTotalExpenses = totalExpenses.reduce(
+      (acc, expenses) => acc + expenses,
+      0
+    );
+    const coh = sumOfTotalIncome - sumOfTotalExpenses;
+    setCoh(coh);
+
     if (totalIncome.length > 0 && totalExpenses.length > 0) {
       // Calculate the total income and total expenses for each month
       const monthlyTotals = totalIncome.map(
@@ -77,7 +119,7 @@ function ChurchExpenses() {
       // Set total as an array containing the total for each month
       setTotal(monthlyTotals);
     }
-  }, [totalIncome, totalExpenses]);
+  }, [totalIncome, totalExpenses, toggleCurrentMonth, toggleCurrentYear]);
 
   const data = {
     labels: filter,
@@ -143,18 +185,30 @@ function ChurchExpenses() {
   return (
     <div className="text-center">
       <h3>Church Financial status</h3>
-      <div className="btn-holder flex gap-2 pt-2">
-        <button
-          className="bg-[#FBFADA] px-2 py-1 text-xs rounded-md"
-          onClick={getFilterByMonth}>
-          Current Month
-        </button>
-        <button
-          className="bg-[#FBFADA] px-2 py-1 text-xs rounded-md"
-          onClick={getFilterByYearAndMonths}>
-          Current Year
-        </button>
+      <div className="flex items-center justify-between">
+        <div className="btn-holder flex gap-2 pt-2">
+          <button
+            className={`bg-[#FBFADA] btn px-2 py-1 text-xs rounded-md${
+              toggleCurrentMonth ? " active" : ""
+            }`}
+            onClick={getFilterByMonth}>
+            Current Month
+          </button>
+          <button
+            className={`bg-[#FBFADA] btn px-2 py-1 text-xs rounded-md${
+              toggleCurrentYear ? " active" : ""
+            }`}
+            onClick={getFilterByYearAndMonths}>
+            Current Year
+          </button>
+        </div>
+        <div>
+          <p className="text-bold">
+            C.O.H:<span className="ml-2">₱{coh}</span>
+          </p>
+        </div>
       </div>
+
       <div className="pt-5 charts" style={{ width: "100%", height: "auto" }}>
         <Bar data={data} options={chartOptions} />
       </div>

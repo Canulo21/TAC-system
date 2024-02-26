@@ -319,7 +319,7 @@ function Registration() {
             className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
           />
         </div>
-        <table className="table-auto mt-2 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5">
+        <table className="table-auto mt-2 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5 ">
           <thead className="bg-[#ADBC9F]">
             <tr>
               <th className="border border-slate-300 p-2">Id</th>

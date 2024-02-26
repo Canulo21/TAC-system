@@ -12,3 +12,8 @@
 .card img:hover {
     transform: scale(0.95);
 }
+
+/* .charts canvas {
+    width: 100% !important;
+    height: auto !important;
+} */
