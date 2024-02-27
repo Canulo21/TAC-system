@@ -31,7 +31,7 @@ function EventModal({ event, onClose }) {
       animate="visible"
       exit="hidden"
       transition={modalTransition}>
-      <div className="modal-content">
+      <div className="modal-content w-3/5">
         <button
           onClick={onClose}
           className="float-right pt-2 pb-2 pl-5 pr-5 bg-[#436850] hover:bg-[#12372A] text-white rounded-md">
@@ -82,17 +82,6 @@ function ChurchEvents() {
   useEffect(() => {
     fetchEventsPost();
   }, []);
-
-  const { id } = useParams();
-
-  useEffect(() => {
-    axios
-      .get(`http://localhost:8080/viewEvent/${id}`)
-      .then((res) => {
-        console.log("Server response:", res.data);
-      })
-      .catch((err) => console.log(err));
-  }, [id]);
 
   const openModal = (event) => {
     setSelectedEvent(event);

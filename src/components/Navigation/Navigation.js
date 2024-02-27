@@ -61,7 +61,7 @@ function Navigation() {
             title="logo"
             alt="logo"></img>
         </header>
-        <NavLink to="/" alt="Dashboard">
+        <NavLink to="/dashboard" alt="Dashboard">
           <span>
             <FontAwesomeIcon icon={faDashboard} />
             Dashboard
@@ -96,7 +96,7 @@ function Navigation() {
               src={MenuLogo}
               alt="Bordered avatar"
             />
-            <p className="text-bold mt-2">Avatar</p>
+            <p className="text-bold mt-2">{}</p>
           </div>
           <button className="pt-3 pb-3 pl-5 pr-5 bg-[#12372A] text-white w-full uppercase flex items-center ">
             <FontAwesomeIcon icon={faSignOut} />

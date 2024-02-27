@@ -1,0 +1,10 @@
+.login-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+}
+.login-holder {
+    background: #fbfada;
+    padding: 50px 25px;
+}

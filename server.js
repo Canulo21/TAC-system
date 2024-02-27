@@ -33,6 +33,21 @@ const db = mysql.createConnection({
   database: "react_tc",
 });
 
+// for login form
+app.post("/login", (req, res) => {
+  const query = "SELECT * FROM users WHERE username = ? AND password = ?";
+  // const values = [req.body.username, req.body.password];
+  db.query(query, [req.body.username, req.body.password], (err, data) => {
+    if (err) return res.json("Login Failed");
+    if (data.length > 0) {
+      // return res.status(200).json({ message: "Login Successfully" });
+      return res.json(data);
+    } else {
+      return res.status(401).json({ status: "No Data Found" });
+    }
+  });
+});
+
 // get all members
 app.get("/users", (req, res) => {
   const order = req.query.order || "asc";
@@ -484,6 +499,7 @@ app.delete("/deleteEvent/:id", (req, res) => {
     }
   });
 });
+
 app.get("/viewEvent/:id", (req, res) => {
   const id = req.params.id;
 

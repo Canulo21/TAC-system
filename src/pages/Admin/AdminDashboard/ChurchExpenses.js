@@ -90,7 +90,6 @@ function ChurchExpenses() {
     }
 
     if (!Array.isArray(totalIncome) || !Array.isArray(totalExpenses)) {
-      console.error("totalIncome or totalExpenses is not an array");
       return;
     }
 
