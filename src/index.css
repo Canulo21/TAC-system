@@ -47,3 +47,43 @@ p {
   width: 95%;
   margin: auto;
 }
+
+.Hold {
+  color: #ef4444;
+}
+.Post {
+  color: #22c55e;
+}
+
+.event-modal {
+  display: table;
+    height: auto;
+    margin: auto;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    
+}
+.event-modal .modal-content {
+  background: #fbfada;
+  padding: 20px;
+  position: relative;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, .6)
+}
+.event-modal .modal-content h2 {
+  text-align: center;
+}
+.event-modal .modal-content span {
+  font-weight: bold;
+}
+.event-modal p {
+  font-size: 20px;
+}
+.event-modal .description p {
+  font-size: 26px;
+}
+
+.link-button:hover {
+  color: #46b2b1;
+}

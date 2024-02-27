@@ -445,7 +445,7 @@ app.get("/getEventsBoard", (req, res) => {
   });
 });
 app.post("/addEvent", (req, res) => {
-  const { title, location, date, status } = req.body;
+  const { title, location, date, status, description } = req.body;
 
   if (!title || !location || !date || !status) {
     return res.status(400).json({
@@ -455,15 +455,19 @@ app.post("/addEvent", (req, res) => {
   }
 
   const query =
-    "INSERT INTO events (title, location, status, date) VALUES (?, ?, ?, ?)";
+    "INSERT INTO events (title, location, status, date, description) VALUES (?, ?, ?, ?, ?)";
 
-  db.query(query, [title, location, status, date], (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json({ Message: "Error" });
+  db.query(
+    query,
+    [title, location, status, date, description],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ Message: "Error" });
+      }
+      return res.status(200).json({ Status: "Success" });
     }
-    return res.status(200).json({ Status: "Success" });
-  });
+  );
 });
 app.delete("/deleteEvent/:id", (req, res) => {
   const id = req.params.id;
@@ -478,6 +482,57 @@ app.delete("/deleteEvent/:id", (req, res) => {
     } else {
       res.status(200).json({ message: "Data deleted successfully" });
     }
+  });
+});
+app.get("/viewEvent/:id", (req, res) => {
+  const id = req.params.id;
+
+  const query = `SELECT * FROM events WHERE id = ?`;
+
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    } else {
+      if (result.length === 0) {
+        res.status(404).json({ error: "Event not found" });
+      } else {
+        // Send the member data back to the client
+        res.status(200).json(result[0]);
+      }
+    }
+  });
+});
+app.put("/updateEvent/:id", (req, res) => {
+  const id = req.params.id;
+  const { data } = req.body; // Destructure 'data' from req.body
+  const { title, location, date, status } = data;
+
+  if (!title || !location || !date || !status) {
+    return res.status(400).json({
+      error: "Bad Request",
+      details: "All fields are required",
+    });
+  }
+
+  const query =
+    "UPDATE events SET title=?, location=?, date=?, status=? WHERE id=?";
+
+  db.query(query, [title, location, date, status, id], (queryError, result) => {
+    if (queryError) {
+      console.error("updateError", queryError);
+      return res.status(500).json({
+        error: "Failed to update event.",
+        details: queryError.message,
+      });
+    }
+    if (!result.affectedRows) {
+      return res.status(404).json({
+        error: "Event not found.",
+      });
+    }
+    return res.json({ updated: true });
   });
 });
 

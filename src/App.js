@@ -8,13 +8,14 @@ import UpdateMember from "./pages/Admin/AdminDashboard/UpdateMember";
 import ChurchFinancial from "./pages/Admin/AdminDashboard/ChurchFinancial";
 import UpdateChurchFinancial from "./pages/Admin/AdminDashboard/UpdateChurchFinancial";
 import ChurchAddEvents from "./pages/Admin/AdminDashboard/ChurchAddEvents";
+import ChurchUpdateEvents from "./pages/Admin/AdminDashboard/ChurchUpdateEvents";
 
 function App() {
   return (
     <Router>
       <div className="app">
         <Navigation />
-        <div className="content">
+        <div className="content relative">
           <Routes>
             <Route path="/adminprofile" element={<AdminProfile />} />
             <Route path="/" element={<AdminDashboard />} />
@@ -26,6 +27,7 @@ function App() {
               element={<UpdateChurchFinancial />}
             />
             <Route path="/events" element={<ChurchAddEvents />} />
+            <Route path="/updateEvent/:id" element={<ChurchUpdateEvents />} />
           </Routes>
         </div>
       </div>
