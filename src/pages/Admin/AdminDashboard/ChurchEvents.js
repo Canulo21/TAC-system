@@ -2,16 +2,40 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { motion } from "framer-motion";
 
 function EventModal({ event, onClose }) {
+  const modalVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0.8,
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+    },
+  };
+
+  const modalTransition = {
+    type: "spring",
+    stiffness: 260,
+    damping: 20,
+  };
+
   return (
-    <div className="modal absolute event-modal">
+    <motion.div
+      className="modal absolute event-modal"
+      variants={modalVariants}
+      initial="hidden"
+      animate="visible"
+      exit="hidden"
+      transition={modalTransition}>
       <div className="modal-content">
         <button
           onClick={onClose}
           className="float-right pt-2 pb-2 pl-5 pr-5 bg-[#436850] hover:bg-[#12372A] text-white rounded-md">
-          <FontAwesomeIcon icon={faClose} />
+          <FontAwesomeIcon icon={faTimes} />
         </button>
         <h2 className="text-black">{event.title}</h2>
         <p className="text-black">
@@ -27,7 +51,7 @@ function EventModal({ event, onClose }) {
           <p className="text-black">{event.description}</p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

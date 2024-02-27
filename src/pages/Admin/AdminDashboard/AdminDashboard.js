@@ -8,6 +8,10 @@ import ChurchPopulation from "./ChurchPopulation";
 import ChurchExpenses from "./ChurchExpenses";
 import ChurchEvents from "./ChurchEvents";
 
+//motion
+import { motion } from "framer-motion";
+import { fadeIn } from "../../../variants";
+
 function AdminDashboard() {
   const [categoryCounts, setCategoryCounts] = useState({
     Mens: 0,
@@ -48,7 +52,12 @@ function AdminDashboard() {
   return (
     <>
       <div className="">
-        <div className="category-wrapper flex justify-between flex-wrap">
+        <motion.div
+          variants={fadeIn("down", 0.2)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: true, amount: 0.3 }}
+          className="category-wrapper flex justify-between flex-wrap">
           {Object.entries(categoryCounts).map(([category, count]) => (
             <div
               key={category}
@@ -93,19 +102,34 @@ function AdminDashboard() {
               </div>
             </div>
           ))}
-        </div>
+        </motion.div>
       </div>
       <div className="middle-part flex justify-between pt-5 gap-5">
-        <div className="p-5 border-2 border-green-50 rounded-xl w-4/5">
+        <motion.div
+          variants={fadeIn("right", 0.4)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: true, amount: 0.5 }}
+          className="p-5 border-2 border-green-50 rounded-xl w-4/5">
           <ChurchExpenses />
-        </div>
-        <div className="p-5 border-2 border-green-50 rounded-xl w-1/3">
+        </motion.div>
+        <motion.div
+          variants={fadeIn("left", 0.4)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: true, amount: 0.5 }}
+          className="p-5 border-2 border-green-50 rounded-xl w-1/3">
           <ChurchPopulation />
-        </div>
+        </motion.div>
       </div>
-      <div className="p-5 border-2 border-green-50 rounded-xl mt-5 w-3/5">
+      <motion.div
+        variants={fadeIn("up", 0.4)}
+        initial="hidden"
+        whileInView={"show"}
+        viewport={{ once: true, amount: 0.5 }}
+        className="p-5 border-2 border-green-50 rounded-xl mt-5 w-3/5">
         <ChurchEvents />
-      </div>
+      </motion.div>
     </>
   );
 }

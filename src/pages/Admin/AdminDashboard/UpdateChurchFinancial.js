@@ -4,6 +4,7 @@ import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 
@@ -96,12 +97,35 @@ function UpdateChurchFinancial() {
     return errors;
   };
 
+  const modalVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0.8,
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+    },
+  };
+
+  const modalTransition = {
+    type: "spring",
+    stiffness: 260,
+    damping: 20,
+  };
+
   return (
     <>
       <div className="relative">
         <h1>Update Expenses</h1>
         <ToastContainer />
-        <div className="card-holder p-5 mb-5 mt-10">
+        <motion.div
+          variants={modalVariants}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          transition={modalTransition}
+          className="card-holder p-5 mb-5 mt-10">
           <Link
             className="text-white py-2 px-4 w-fit float-right rounded-md flex items-center gap-2 bg-[#436850] hover:bg-[#12372a]"
             to={"/financial"}>
@@ -160,7 +184,7 @@ function UpdateChurchFinancial() {
               </button>
             </div>
           </form>
-        </div>
+        </motion.div>
       </div>
     </>
   );

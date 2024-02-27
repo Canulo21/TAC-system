@@ -4,6 +4,8 @@ import avatarProfile from "../../../Assets/images/avatar.png";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
+import { motion } from "framer-motion";
+import { fadeIn } from "../../../variants";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -304,12 +306,41 @@ function Registration() {
     return errors;
   };
 
+  const modalVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0.8,
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+    },
+  };
+
+  const modalTransition = {
+    type: "spring",
+    stiffness: 260,
+    damping: 20,
+  };
+
   return (
     <>
       <div className="relative">
-        <h1>Registration</h1>
+        <motion.div
+          variants={fadeIn("down", 0.2)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: true, amount: 0.3 }}>
+          <h1>Registration</h1>
+        </motion.div>
+
         <ToastContainer />
-        <div className="search-holder flex items-center gap-2 mt-10">
+        <motion.div
+          variants={fadeIn("right", 0.2)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: true, amount: 0.3 }}
+          className="search-holder flex items-center gap-2 mt-10">
           <FontAwesomeIcon className="text-white text-xl" icon={faSearch} />
           <input
             type="text"
@@ -318,73 +349,85 @@ function Registration() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
           />
-        </div>
-        <table className="table-auto mt-2 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5 ">
-          <thead className="bg-[#ADBC9F]">
-            <tr>
-              <th className="border border-slate-300 p-2">Id</th>
-              <th className="border border-slate-300 p-2">Firstname</th>
-              <th className="border border-slate-300 p-2">Middlename</th>
-              <th className="border border-slate-300 p-2">Lastname</th>
-              <th className="border border-slate-300 p-2">Gender</th>
-              <th className="border border-slate-300 p-2">Birthdate</th>
-              <th className="border border-slate-300 p-2">Category</th>
-              <th className="border border-slate-300 p-2">Position</th>
-              <th className="border border-slate-300 p-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {getSlicedData().map((d, index) => (
-              <tr key={index} className="text-center">
-                <td className="border border-slate-300 p-2 ">{d.user_id}</td>
-                <td className="border border-slate-300 p-2 uppercase">
-                  {d.fname}
-                </td>
-                <td className="border border-slate-300 p-2 uppercase">
-                  {d.mname}
-                </td>
-                <td className="border border-slate-300 p-2 uppercase">
-                  {d.lname}
-                </td>
-                <td className="border border-slate-300 p-2 uppercase">
-                  {d.gender}
-                </td>
-                <td className="border border-slate-300 p-2 uppercase">
-                  {d.birthdate}
-                </td>
-                <td className="border border-slate-300 p-2 uppercase">
-                  {d.category}
-                </td>
-                <td className="border border-slate-300 p-2 uppercase">
-                  {d.position}
-                </td>
-                <td className="border border-slate-300 p-2">
-                  <div className="flex gap-2 justify-center">
-                    <Link
-                      className="bg-green-500 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#12372a]"
-                      to={`/updateMember/${d.user_id}`}>
-                      <FontAwesomeIcon icon={faEdit} />
-                      Edit
-                    </Link>
-                    <button
-                      className="bg-red-500 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#a93737]"
-                      onClick={() => handleDelete(d.user_id)}>
-                      <FontAwesomeIcon icon={faTrash} />
-                      Delete
-                    </button>
-                  </div>
-                </td>
+        </motion.div>
+        <motion.div
+          variants={fadeIn("left", 0.2)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: true, amount: 0.3 }}>
+          <table className="table-auto mt-2 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5 ">
+            <thead className="bg-[#ADBC9F]">
+              <tr>
+                <th className="border border-slate-300 p-2">Id</th>
+                <th className="border border-slate-300 p-2">Firstname</th>
+                <th className="border border-slate-300 p-2">Middlename</th>
+                <th className="border border-slate-300 p-2">Lastname</th>
+                <th className="border border-slate-300 p-2">Gender</th>
+                <th className="border border-slate-300 p-2">Birthdate</th>
+                <th className="border border-slate-300 p-2">Category</th>
+                <th className="border border-slate-300 p-2">Position</th>
+                <th className="border border-slate-300 p-2">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {getSlicedData().map((d, index) => (
+                <tr key={index} className="text-center">
+                  <td className="border border-slate-300 p-2 ">{d.user_id}</td>
+                  <td className="border border-slate-300 p-2 uppercase">
+                    {d.fname}
+                  </td>
+                  <td className="border border-slate-300 p-2 uppercase">
+                    {d.mname}
+                  </td>
+                  <td className="border border-slate-300 p-2 uppercase">
+                    {d.lname}
+                  </td>
+                  <td className="border border-slate-300 p-2 uppercase">
+                    {d.gender}
+                  </td>
+                  <td className="border border-slate-300 p-2 uppercase">
+                    {d.birthdate}
+                  </td>
+                  <td className="border border-slate-300 p-2 uppercase">
+                    {d.category}
+                  </td>
+                  <td className="border border-slate-300 p-2 uppercase">
+                    {d.position}
+                  </td>
+                  <td className="border border-slate-300 p-2">
+                    <div className="flex gap-2 justify-center">
+                      <Link
+                        className="bg-green-500 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#12372a]"
+                        to={`/updateMember/${d.user_id}`}>
+                        <FontAwesomeIcon icon={faEdit} />
+                        Edit
+                      </Link>
+                      <button
+                        className="bg-red-500 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#a93737]"
+                        onClick={() => handleDelete(d.user_id)}>
+                        <FontAwesomeIcon icon={faTrash} />
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </motion.div>
+        <motion.div
+          variants={fadeIn("up", 0.2)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: true, amount: 0.3 }}>
+          <button
+            className="bg-blue-500 text-white py-2 px-4 rounded-md flex items-center gap-2 mt-2 mb-5 ml-2 hover:bg-[#2e5491]"
+            onClick={() => setShowModal(true)}>
+            <FontAwesomeIcon icon={faUserPlus} />
+            Add
+          </button>
+        </motion.div>
 
-        <button
-          className="bg-blue-500 text-white py-2 px-4 rounded-md flex items-center gap-2 mt-2 mb-5 ml-2 hover:bg-[#2e5491]"
-          onClick={() => setShowModal(true)}>
-          <FontAwesomeIcon icon={faUserPlus} />
-          Add
-        </button>
         {/* Pagination controls */}
         {hasData && pagesPerBatch <= 10 && (
           <div className="pt-5 flex justify-center gap-2">
@@ -426,7 +469,13 @@ function Registration() {
 
         {/* MODAL FOR ADD MEMBER */}
         {showModal ? (
-          <div className="registration-holder ">
+          <motion.div
+            variants={modalVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            transition={modalTransition}
+            className="registration-holder ">
             <form className="bg-[#fafafa] shadow-md rounded px-8 pt-6 pb-8 mb-4">
               <button
                 onClick={closeModal}
@@ -663,7 +712,7 @@ function Registration() {
                 </button>
               </div>
             </form>
-          </div>
+          </motion.div>
         ) : null}
       </div>
     </>

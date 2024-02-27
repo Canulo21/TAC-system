@@ -14,6 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useParams } from "react-router-dom";
 import Modal from "react-modal";
+import { motion } from "framer-motion";
 
 function UpdateMember() {
   const [avatar, setAvatar] = useState(null);
@@ -157,12 +158,35 @@ function UpdateMember() {
     setIsModalOpen(false);
   };
 
+  const modalVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0.8,
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+    },
+  };
+
+  const modalTransition = {
+    type: "spring",
+    stiffness: 260,
+    damping: 20,
+  };
+
   return (
     <>
       <div className="relative">
         <h1>Update Member</h1>
         <ToastContainer />
-        <div className="registration-holder">
+        <motion.div
+          variants={modalVariants}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          transition={modalTransition}
+          className="registration-holder">
           <form className="bg-[#fafafa] shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <Link
               to={`/registration`}
@@ -388,7 +412,7 @@ function UpdateMember() {
               </button>
             </div>
           </form>
-        </div>
+        </motion.div>
       </div>
 
       <Modal

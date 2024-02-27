@@ -4,6 +4,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import { motion } from "framer-motion";
+import { fadeIn } from "../../../variants";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -187,69 +189,112 @@ function ChurchAddEvents() {
     return errors;
   };
 
+  const modalVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0.8,
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+    },
+  };
+
+  const modalTransition = {
+    type: "spring",
+    stiffness: 260,
+    damping: 20,
+  };
+
   return (
     <>
-      <h3 className="text-center">Events</h3>
-      <ToastContainer />
-      <table className="table-auto mt-2 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5 text-center">
-        <thead className="bg-[#ADBC9F]">
-          <tr>
-            <th className="border border-slate-300 p-2 uppercase">id</th>
-            <th className="border border-slate-300 p-2 uppercase">title</th>
-            <th className="border border-slate-300 p-2 uppercase">location</th>
-            <th className="border border-slate-300 p-2 uppercase">date</th>
-            <th className="border border-slate-300 p-2 uppercase">status</th>
-            <th className="border border-slate-300 p-2 uppercase">action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((d, index) => (
-            <tr key={index}>
-              <td className="border border-slate-300 p-2 ">{d.id}</td>
-              <td className="border border-slate-300 p-2 uppercase ">
-                {d.title}
-              </td>
-              <td className="border border-slate-300 p-2 uppercase ">
-                {d.location}
-              </td>
-              <td className="border border-slate-300 p-2 uppercase">
-                {d.date}
-              </td>
-              <td
-                className={`border border-slate-300 p-2 uppercase text-bold ${d.status}`}>
-                {d.status}
-              </td>
-              <td className="border border-slate-300 p-2 uppercase">
-                <div className="flex gap-2 justify-center">
-                  <Link
-                    className="bg-green-500 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#12372a]"
-                    to={`/updateEvent/${d.id}`}>
-                    <FontAwesomeIcon icon={faEdit} />
-                    Edit
-                  </Link>
-                  <button
-                    className="bg-red-500 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#a93737]"
-                    onClick={() => handleDeleteEvent(d.id)}>
-                    <FontAwesomeIcon icon={faTrash} />
-                    Delete
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <motion.div
+        variants={fadeIn("down", 0.2)}
+        initial="hidden"
+        whileInView={"show"}
+        viewport={{ once: true, amount: 0.3 }}>
+        <h3 className="text-center">Events</h3>
+      </motion.div>
 
-      <button
-        className="bg-blue-500 text-white py-2 px-4 rounded-md flex items-center gap-2 mt-2 mb-5 ml-2 hover:bg-[#2e5491]"
-        onClick={() => setShowModal(true)}>
-        <FontAwesomeIcon icon={faCalendarPlus} />
-        Add Event
-      </button>
+      <ToastContainer />
+      <motion.div
+        variants={fadeIn("left", 0.2)}
+        initial="hidden"
+        whileInView={"show"}
+        viewport={{ once: true, amount: 0.3 }}>
+        <table className="table-auto mt-2 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5 text-center">
+          <thead className="bg-[#ADBC9F]">
+            <tr>
+              <th className="border border-slate-300 p-2 uppercase">id</th>
+              <th className="border border-slate-300 p-2 uppercase">title</th>
+              <th className="border border-slate-300 p-2 uppercase">
+                location
+              </th>
+              <th className="border border-slate-300 p-2 uppercase">date</th>
+              <th className="border border-slate-300 p-2 uppercase">status</th>
+              <th className="border border-slate-300 p-2 uppercase">action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((d, index) => (
+              <tr key={index}>
+                <td className="border border-slate-300 p-2 ">{d.id}</td>
+                <td className="border border-slate-300 p-2 uppercase ">
+                  {d.title}
+                </td>
+                <td className="border border-slate-300 p-2 uppercase ">
+                  {d.location}
+                </td>
+                <td className="border border-slate-300 p-2 uppercase">
+                  {d.date}
+                </td>
+                <td
+                  className={`border border-slate-300 p-2 uppercase text-bold ${d.status}`}>
+                  {d.status}
+                </td>
+                <td className="border border-slate-300 p-2 uppercase">
+                  <div className="flex gap-2 justify-center">
+                    <Link
+                      className="bg-green-500 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#12372a]"
+                      to={`/updateEvent/${d.id}`}>
+                      <FontAwesomeIcon icon={faEdit} />
+                      Edit
+                    </Link>
+                    <button
+                      className="bg-red-500 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#a93737]"
+                      onClick={() => handleDeleteEvent(d.id)}>
+                      <FontAwesomeIcon icon={faTrash} />
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </motion.div>
+      <motion.div
+        variants={fadeIn("up", 0.2)}
+        initial="hidden"
+        whileInView={"show"}
+        viewport={{ once: true, amount: 0.3 }}>
+        <button
+          className="bg-blue-500 text-white py-2 px-4 rounded-md flex items-center gap-2 mt-2 mb-5 ml-2 hover:bg-[#2e5491]"
+          onClick={() => setShowModal(true)}>
+          <FontAwesomeIcon icon={faCalendarPlus} />
+          Add Event
+        </button>
+      </motion.div>
 
       {/* MODAL FOR ADD MEMBER */}
       {showModal ? (
-        <div className="registration-holder content">
+        <motion.div
+          variants={modalVariants}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          transition={modalTransition}
+          className="registration-holder content">
           <form className="bg-[#fafafa] shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <button
               onClick={closeModal}
@@ -387,7 +432,7 @@ function ChurchAddEvents() {
               Save
             </button>
           </form>
-        </div>
+        </motion.div>
       ) : null}
     </>
   );
