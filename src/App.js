@@ -19,20 +19,38 @@ import LoginForm from "./components/Auth/LoginForm/LoginForm";
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
+  const [inUsedBy, setInUsedBy] = useState(""); // Add your logic to set the user information
+  const [inPicBy, setInPicdBy] = useState("");
+  const [inUserId, setInUserId] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = (inUserId, inUsedBy, inPicBy) => {
     setAuthenticated(true);
+    setInUserId(inUserId);
+    setInUsedBy(inUsedBy);
+    setInPicdBy(inPicBy);
+    console.log("Logged in as:", inUsedBy);
   };
 
   const handleLogout = () => {
     // Add logic for handling logout and update authentication status
     setAuthenticated(false);
+    inUserId("");
+    setInUsedBy("");
+    setInPicdBy("");
   };
 
   return (
     <Router>
       <div className="app">
-        {authenticated && <Navigation onLogout={handleLogout} />}
+        {authenticated && (
+          <Navigation
+            inUserId={inUserId}
+            inUsedBy={inUsedBy}
+            inPicBy={inPicBy}
+            onLogout={handleLogout}
+          />
+        )}
+
         <div className="content relative">
           <Routes>
             <Route path="/dashboard" element={<AdminDashboard />} />

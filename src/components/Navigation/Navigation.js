@@ -14,7 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import MenuLogo from "../../Assets/images/menu-logo.png";
 
-function Navigation() {
+function Navigation({ inUserId, inUsedBy, inPicBy }) {
   const [toggle, setToggle] = useState(false);
 
   const onToggle = () => {
@@ -54,12 +54,14 @@ function Navigation() {
         <FontAwesomeIcon icon={toggle ? faTimes : faBars} />
       </button>
       <div className={`sidebar${toggle ? " active" : ""}`}>
-        <header className="flex justify-center p-5 pt-6 mb-10">
-          <img
-            className="rounded-full ring-2 ring-gray-300 dark:ring-gray-500 p-5"
-            src={MenuLogo}
-            title="logo"
-            alt="logo"></img>
+        <header className="flex justify-center p-5 pt-6 mb-14">
+          <NavLink className="logo-link" to="/dashboard">
+            <img
+              className="rounded-full ring-2 ring-gray-300 dark:ring-gray-500 p-5"
+              src={MenuLogo}
+              title="logo"
+              alt="logo"></img>
+          </NavLink>
         </header>
         <NavLink to="/dashboard" alt="Dashboard">
           <span>
@@ -93,10 +95,10 @@ function Navigation() {
           <div className="flex items-center p-5 flex-col mb-2">
             <img
               className="w-20 h-20 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500"
-              src={MenuLogo}
+              src={`http://localhost:8080/profilepics/${inUserId}/${inPicBy}`}
               alt="Bordered avatar"
             />
-            <p className="text-bold mt-2">{}</p>
+            <p className="font-black mt-2 uppercase">{inUsedBy}</p>
           </div>
           <button className="pt-3 pb-3 pl-5 pr-5 bg-[#12372A] text-white w-full uppercase flex items-center ">
             <FontAwesomeIcon icon={faSignOut} />

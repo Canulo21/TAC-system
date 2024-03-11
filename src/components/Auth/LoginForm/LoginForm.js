@@ -8,17 +8,22 @@ import "./LoginForm.css";
 function LoginForm({ onLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setErrors(validateValues(username, password));
     axios
       .post("http://localhost:8080/login", { username, password })
       .then((res) => {
-        console.log(res);
         if (res.status === 200) {
-          const inUsedBy = res.data[0].fname;
-          console.log(inUsedBy);
-          onLogin();
+          const {
+            fname: inUsedBy,
+            profile_pic_url: inPicBy,
+            user_id: inUserId,
+          } = res.data[0];
+          console.log(inPicBy);
+          onLogin(inUserId, inUsedBy, inPicBy);
           toast.success("Successfully Login! 👌", {
             position: "top-right",
             autoClose: 2000,
@@ -56,6 +61,17 @@ function LoginForm({ onLogin }) {
               progress: undefined,
               theme: "colored",
             });
+          } else if (status === 400) {
+            toast.error("Should not be Empty!!", {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
           } else {
             // Handle other errors
             console.log("here", err);
@@ -63,31 +79,61 @@ function LoginForm({ onLogin }) {
         }
       });
   };
+
+  const validateValues = (username, password) => {
+    let errors = {};
+
+    if (username.trim() === "") {
+      errors.username = "Provide Username";
+      console.log(errors.username);
+    }
+    if (password.trim() === "") {
+      errors.password = "Provide Password";
+      console.log(errors.password);
+    }
+
+    return errors;
+  };
+
   return (
     <>
       <div className="login-wrapper">
         <div className="login-holder w-2/6">
           <ToastContainer />
           <form onSubmit={handleSubmit}>
-            <div>
-              <label htmlFor="username">Username:</label>
+            <div className="mb-4">
+              <label className="text-lg font-bold" htmlFor="username">
+                Username:
+              </label>
               <input
-                className="appearance-none w-full block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                className="appearance-none w-full  block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 type="text"
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
+              {errors.username ? (
+                <p className="error text-red-600 text-sm font-bold">
+                  {errors.username}
+                </p>
+              ) : null}
             </div>
             <div>
-              <label htmlFor="password">Password:</label>
+              <label className="text-lg font-bold" htmlFor="password">
+                Password:
+              </label>
               <input
-                className="appearance-none w-full block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                className="appearance-none w-full  block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 type="password"
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              {errors.password ? (
+                <p className="error text-red-600 text-sm font-bold">
+                  {errors.password}
+                </p>
+              ) : null}
             </div>
             <div className="flex justify-between">
               <button

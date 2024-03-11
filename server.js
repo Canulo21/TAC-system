@@ -37,7 +37,15 @@ const db = mysql.createConnection({
 app.post("/login", (req, res) => {
   const query = "SELECT * FROM users WHERE username = ? AND password = ?";
   // const values = [req.body.username, req.body.password];
-  db.query(query, [req.body.username, req.body.password], (err, data) => {
+  const { username, password } = req.body;
+  db.query(query, [username, password], (err, data) => {
+    if (!username || !password) {
+      return res.status(400).json({
+        error: "Bad Request",
+        details: "Should not be Empty!!",
+      });
+    }
+
     if (err) return res.json("Login Failed");
     if (data.length > 0) {
       // return res.status(200).json({ message: "Login Successfully" });

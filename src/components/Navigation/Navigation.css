@@ -10,6 +10,16 @@
     z-index: 9999;
   }
 
+  .sidebar header .logo-link {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+  }
+  .sidebar header .logo-link:hover,
+  .sidebar header .logo-link.active {
+   border: none;
+   background: none;
+  }
   .sidebar header img {
     filter: drop-shadow( 0 3px 6px rgba(0,0,0, .16));
   }
