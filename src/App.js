@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import {
   BrowserRouter as Router,
@@ -8,7 +8,6 @@ import {
 } from "react-router-dom";
 import Navigation from "./components/Navigation/Navigation";
 import AdminDashboard from "./pages/Admin/AdminDashboard/AdminDashboard";
-import AdminProfile from "./pages/Admin/AdminProfile/AdminProfile";
 import Registration from "./pages/Admin/Registration/Registration";
 import UpdateMember from "./pages/Admin/AdminDashboard/UpdateMember";
 import ChurchFinancial from "./pages/Admin/AdminDashboard/ChurchFinancial";
@@ -19,29 +18,67 @@ import LoginForm from "./components/Auth/LoginForm/LoginForm";
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
-  const [inUsedBy, setInUsedBy] = useState(""); // Add your logic to set the user information
+  const [inUsedBy, setInUsedBy] = useState("");
   const [inPicBy, setInPicdBy] = useState("");
   const [inUserId, setInUserId] = useState("");
 
-  const handleLogin = (inUserId, inUsedBy, inPicBy) => {
+  useEffect(() => {
+    // Check if user is already authenticated in localStorage
+    const storedAuth = localStorage.getItem("authenticated");
+    if (storedAuth === "true") {
+      setAuthenticated(true);
+      setInUserId(localStorage.getItem("inUserId"));
+      setInUsedBy(localStorage.getItem("inUsedBy"));
+      setInPicdBy(localStorage.getItem("inPicBy"));
+    }
+  }, []);
+
+  const handleLogin = (userId, usedBy, picBy) => {
     setAuthenticated(true);
-    setInUserId(inUserId);
-    setInUsedBy(inUsedBy);
-    setInPicdBy(inPicBy);
-    console.log("Logged in as:", inUsedBy);
+    setInUserId(userId);
+    setInUsedBy(usedBy);
+    setInPicdBy(picBy);
+
+    // Save authentication state to localStorage
+    localStorage.setItem("authenticated", "true");
+    localStorage.setItem("inUserId", userId);
+    localStorage.setItem("inUsedBy", usedBy);
+    localStorage.setItem("inPicBy", picBy);
   };
 
   const handleLogout = () => {
-    // Add logic for handling logout and update authentication status
+    // Display loader
+    const loader = document.getElementById("loader");
+    loader.style.display = "block";
+
+    const content = document.getElementsByClassName("content")[0];
+    content.style.filter = "blur(6px)";
+
+    // Perform logout actions
     setAuthenticated(false);
-    inUserId("");
+    setInUserId("");
     setInUsedBy("");
     setInPicdBy("");
+
+    // Remove authentication state from localStorage
+    localStorage.removeItem("authenticated");
+    localStorage.removeItem("inUserId");
+    localStorage.removeItem("inUsedBy");
+    localStorage.removeItem("inPicBy");
+
+    // Hide loader after logout actions are completed
+    setTimeout(() => {
+      loader.style.display = "none";
+      content.style.filter = "blur(0)";
+    }, 3000); // Adjust the timeout value as needed
   };
 
   return (
     <Router>
       <div className="app">
+        <div className="holder-loader">
+          <div id="loader" class="loader"></div>
+        </div>
         {authenticated && (
           <Navigation
             inUserId={inUserId}
@@ -50,7 +87,6 @@ function App() {
             onLogout={handleLogout}
           />
         )}
-
         <div className="content relative">
           <Routes>
             <Route path="/dashboard" element={<AdminDashboard />} />
@@ -58,7 +94,7 @@ function App() {
               <Route path="/" element={<LoginForm onLogin={handleLogin} />} />
             ) : (
               <>
-                <Route path="/adminprofile" element={<AdminProfile />} />
+                <Route path="/adminprofile" element={<UpdateMember />} />
                 <Route path="/registration" element={<Registration />} />
                 <Route path="/updateMember/:id" element={<UpdateMember />} />
                 <Route path="/financial" element={<ChurchFinancial />} />

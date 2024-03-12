@@ -13,9 +13,11 @@ import {
   faMoneyBill,
 } from "@fortawesome/free-solid-svg-icons";
 import MenuLogo from "../../Assets/images/menu-logo.png";
+import axios from "axios";
 
-function Navigation({ inUserId, inUsedBy, inPicBy }) {
+function Navigation({ inUserId, inUsedBy, inPicBy, onLogout }) {
   const [toggle, setToggle] = useState(false);
+  const [userId, setUserId] = useState([]);
 
   const onToggle = () => {
     setToggle(!toggle);
@@ -45,6 +47,23 @@ function Navigation({ inUserId, inUsedBy, inPicBy }) {
       document.removeEventListener("touchstart", handleDocumentClick);
     };
   }, [isHamburgerActive]);
+
+  const handleLogout = () => {
+    onLogout(); // Call the onLogout function from prop
+    setToggle(false); // Close sidebar after logging out
+  };
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/users")
+      .then((res) => {
+        // Assuming the response is an array of users
+        // and you want to get the ID of the first user
+        const currentUserId = res.data[0].user_id;
+        setUserId(currentUserId);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   return (
     <>
@@ -85,7 +104,7 @@ function Navigation({ inUserId, inUsedBy, inPicBy }) {
             <FontAwesomeIcon icon={faMoneyBill} /> Financial
           </span>
         </NavLink>
-        <NavLink to="/adminprofile" alt="Profile">
+        <NavLink to={`/updateMember/${userId}`} alt="Profile">
           <span>
             <FontAwesomeIcon icon={faUser} /> Profile
           </span>
@@ -100,7 +119,9 @@ function Navigation({ inUserId, inUsedBy, inPicBy }) {
             />
             <p className="font-black mt-2 uppercase">{inUsedBy}</p>
           </div>
-          <button className="pt-3 pb-3 pl-5 pr-5 bg-[#12372A] text-white w-full uppercase flex items-center ">
+          <button
+            className="pt-3 pb-3 pl-5 pr-5 bg-[#12372A] text-white w-full uppercase flex items-center "
+            onClick={handleLogout}>
             <FontAwesomeIcon icon={faSignOut} />
             <label className="w-full text-xl">log out</label>
           </button>

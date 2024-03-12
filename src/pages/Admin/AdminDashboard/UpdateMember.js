@@ -178,7 +178,7 @@ function UpdateMember() {
   return (
     <>
       <div className="relative">
-        <h1>Update Member</h1>
+        <h1>Update Profile</h1>
         <ToastContainer />
         <motion.div
           variants={modalVariants}

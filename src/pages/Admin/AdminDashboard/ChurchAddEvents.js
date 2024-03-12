@@ -249,7 +249,7 @@ function ChurchAddEvents() {
                   {d.date}
                 </td>
                 <td
-                  className={`border border-slate-300 p-2 uppercase text-bold ${d.status}`}>
+                  className={`border border-slate-300 p-2 uppercase font-bold ${d.status}`}>
                   {d.status}
                 </td>
                 <td className="border border-slate-300 p-2 uppercase">
@@ -301,9 +301,11 @@ function ChurchAddEvents() {
               className="float-right pt-2 pb-2 pl-5 pr-5 bg-[#436850] hover:bg-[#12372A] text-white rounded-md">
               <FontAwesomeIcon icon={faClose} />
             </button>
-            <div className="flex flex-wrap items-center justify-center gap-5 pt-2 pb-5">
-              <label className="text-xl text-bold">Title Event:</label>
-              <div className=" w-full">
+            <div className="gap-5 pt-2 pb-5">
+              <label className="text-xl font-bold block text-center">
+                Title Event:
+              </label>
+              <div className=" w-full mb-5">
                 <input
                   className="appearance-none block  w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   type="text"
@@ -315,104 +317,106 @@ function ChurchAddEvents() {
                   <p className="error text-red-600 font-bold">{errors.title}</p>
                 ) : null}
               </div>
-
-              <div className=" w-1/3 relataive">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="grid-birth-date">
-                  Location
-                  <span className="text-red-600 font-bold text-lg"> *</span>
-                </label>
-                <input
-                  className="appearance-none block  w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  type="text"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                  placeholder="eg. Tudela Alliance Church"></input>
-                {errors.location ? (
-                  <p className="error text-red-600 font-bold">
-                    {errors.location}
-                  </p>
-                ) : null}
-              </div>
-
-              <div className=" w-auto relative">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="grid-birth-date">
-                  Date
-                  <span className="text-red-600 font-bold text-lg"> *</span>
-                </label>
-                <div className="w-auto relative">
-                  <DatePicker
-                    className="appearance-none block w-full bg-gray-200 w-full text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                    id="grid-birth-date"
-                    selected={selectedDate}
-                    name="date"
-                    onChange={(date) => {
-                      setSelectedDate(date);
-                      setFormData({
-                        ...formData,
-                        date: date
-                          ? date.toLocaleDateString("en-US", {
-                              year: "numeric",
-                              month: "numeric",
-                              day: "numeric",
-                            })
-                          : "", // Format the date
-                      });
-                    }}
-                    placeholderText="Click to select a date"
-                    showYearDropdown
-                    scrollableYearDropdown
-                  />
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                    <FontAwesomeIcon icon={faCalendar} />
-                  </div>
+              <div className="grid grid-cols-3 gap-4 mb-5">
+                <div className=" w-full relataive">
+                  <label
+                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    htmlFor="grid-birth-date">
+                    Location
+                    <span className="text-red-600 font-bold text-lg"> *</span>
+                  </label>
+                  <input
+                    className="appearance-none block  w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    placeholder="eg. Tudela Alliance Church"></input>
+                  {errors.location ? (
+                    <p className="error text-red-600 font-bold">
+                      {errors.location}
+                    </p>
+                  ) : null}
                 </div>
 
-                {errors.date ? (
-                  <p className="error text-red-600 font-bold">{errors.date}</p>
-                ) : null}
-              </div>
-              <div className="w-1/3 relative">
-                <label
-                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="grid-last-name">
-                  Status
-                  <span className="text-red-600 font-bold text-lg"> *</span>
-                </label>
-                <div className="relative">
-                  <select
-                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                    id="grid-position"
-                    name="status"
-                    value={formData.status}
-                    onChange={handleInputChange}>
-                    <option value=""></option>
-                    <option value="Post">Post</option>
-                    <option value="Hold">Hold</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-700">
-                    <FontAwesomeIcon icon={faChevronDown} />
+                <div className=" w-full relative">
+                  <label
+                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    htmlFor="grid-birth-date">
+                    Date
+                    <span className="text-red-600 font-bold text-lg"> *</span>
+                  </label>
+                  <div className="w-auto relative">
+                    <DatePicker
+                      className="appearance-none block w-full bg-gray-200 w-full text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                      id="grid-birth-date"
+                      selected={selectedDate}
+                      name="date"
+                      onChange={(date) => {
+                        setSelectedDate(date);
+                        setFormData({
+                          ...formData,
+                          date: date
+                            ? date.toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "numeric",
+                                day: "numeric",
+                              })
+                            : "", // Format the date
+                        });
+                      }}
+                      placeholderText="Click to select a date"
+                      showYearDropdown
+                      scrollableYearDropdown
+                    />
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <FontAwesomeIcon icon={faCalendar} />
+                    </div>
                   </div>
-                </div>
-                {errors.status ? (
-                  <p className="error text-red-600 font-bold">
-                    {errors.status}
-                  </p>
-                ) : null}
-              </div>
 
-              <div className=" w-1/3 relataive">
+                  {errors.date ? (
+                    <p className="error text-red-600 font-bold">
+                      {errors.date}
+                    </p>
+                  ) : null}
+                </div>
+                <div className="w-full relative">
+                  <label
+                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    htmlFor="grid-last-name">
+                    Status
+                    <span className="text-red-600 font-bold text-lg"> *</span>
+                  </label>
+                  <div className="relative">
+                    <select
+                      className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                      id="grid-position"
+                      name="status"
+                      value={formData.status}
+                      onChange={handleInputChange}>
+                      <option value=""></option>
+                      <option value="Post">Post</option>
+                      <option value="Hold">Hold</option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-700">
+                      <FontAwesomeIcon icon={faChevronDown} />
+                    </div>
+                  </div>
+                  {errors.status ? (
+                    <p className="error text-red-600 font-bold">
+                      {errors.status}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+              <div className=" w-full relataive">
                 <label
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   htmlFor="grid-description ">
                   Desciption
                 </label>
                 <textarea
-                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  className="appearance-none h-32 block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   id="grid-description "
                   name="description" // Provide a name attribute
                   value={formData.description} // Use formData to get and set the value

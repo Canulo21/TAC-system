@@ -89,3 +89,37 @@ p {
 .link-button:hover {
   color: #46b2b1;
 }
+
+/* HTML: <div class="loader"></div> */
+.holder-loader {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+}
+.loader {    
+  display: none;
+  --r1: 154%;
+  --r2: 68.5%;
+  width: 170px;
+  aspect-ratio: 1;
+  border-radius: 50%; 
+  background:
+    radial-gradient(var(--r1) var(--r2) at top   ,#0000 79.5%,#269af2 80%),
+    radial-gradient(var(--r1) var(--r2) at bottom,#269af2 79.5%,#0000 80%),
+    radial-gradient(var(--r1) var(--r2) at top   ,#0000 79.5%,#269af2 80%),
+    #ccc;
+  background-size: 50.5% 220%;
+  background-position: -100% 0%,0% 0%,100% 0%;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, .6);
+  background-repeat:no-repeat;
+  animation: l9 2s infinite linear;
+  z-index: 1;
+}
+@keyframes l9 {
+    33%  {background-position:    0% 33% ,100% 33% ,200% 33% }
+    66%  {background-position: -100%  66%,0%   66% ,100% 66% }
+    100% {background-position:    0% 100%,100% 100%,200% 100%}
+}
