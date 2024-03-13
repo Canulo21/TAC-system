@@ -5,6 +5,19 @@
     height: 80vh;
 }
 .login-holder {
+    box-shadow: 5px 5px 12px rgba(0,0,0, .6);
     background: #fbfada;
-    padding: 50px 25px;
+    padding: 110px 25px 50px;
+}
+.img-holder {
+    display: flex;
+    justify-content: center;
+}
+.login-pic {
+    box-shadow: 0 3px 6px rgba(0,0,0, .3);
+    background: #fbfada;
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    top: -100px;
 }

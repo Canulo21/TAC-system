@@ -203,7 +203,8 @@ function ChurchExpenses() {
         </div>
         <div>
           <p className="text-bold">
-            C.O.H:<span className="ml-2">₱{coh}</span>
+            C.O.H:
+            <span className="ml-2">₱{coh}</span>
           </p>
         </div>
       </div>

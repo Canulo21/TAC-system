@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./ChurchFinancial.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -7,7 +7,17 @@ import { fadeIn } from "../../../variants";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEdit,
+  faEye,
+  faEyeDropper,
+  faEyeSlash,
+  faPrint,
+  faRemove,
+  faSearch,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
+import { useReactToPrint } from "react-to-print";
 
 function ChurchFinancial() {
   const [data, setData] = useState([]);
@@ -257,6 +267,34 @@ function ChurchFinancial() {
     d.date.toLowerCase().includes(searchExDate.toLowerCase())
   );
 
+  const [isHidden, setIsHidden] = useState(false);
+  const [isActionHidden, setIsActionHidden] = useState(false);
+  const componentPDF = useRef();
+  const componentIncomePDF = useRef();
+
+  const expensesPDF = useReactToPrint({
+    content: () => componentPDF.current,
+    documentTitle: "Expenses Data",
+    onAfterPrint: () => {
+      alert("Data saved in PDF");
+    },
+  });
+
+  const incomePDF = useReactToPrint({
+    content: () => componentIncomePDF.current,
+    documentTitle: "Expenses Data",
+    onAfterPrint: () => {
+      alert("Data saved in PDF");
+    },
+  });
+
+  const handleIncomeAction = () => {
+    setIsActionHidden(!isActionHidden);
+  };
+  const handleExpensesAction = () => {
+    setIsHidden(!isHidden);
+  };
+
   return (
     <>
       <div className="text-center">
@@ -273,9 +311,7 @@ function ChurchFinancial() {
             variants={fadeIn("down", 0.2)}
             initial="hidden"
             whileInView={"show"}
-            viewport={{ once: true, amount: 0.3 }}>
-            <h3>Income</h3>
-          </motion.div>
+            viewport={{ once: true, amount: 0.3 }}></motion.div>
 
           <div className="form-holder">
             <form>
@@ -314,49 +350,69 @@ function ChurchFinancial() {
                 onChange={handleSearch}
                 className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               />
+              <button
+                className="bg-blue-500 uppercase text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#2e5491]"
+                onClick={incomePDF}>
+                Print
+                <FontAwesomeIcon icon={faPrint} />
+              </button>
+              <button
+                className="bg-red-500  uppercase text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#a93737]"
+                onClick={handleIncomeAction}>
+                Action
+                <FontAwesomeIcon icon={isActionHidden ? faEyeSlash : faEye} />
+              </button>
             </div>
             <motion.div
               variants={fadeIn("up", 0.2)}
               initial="hidden"
               whileInView={"show"}
               viewport={{ once: true, amount: 0.3 }}>
-              <table className="table-auto mt-1 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5">
-                <thead>
-                  <tr>
-                    <th className="border border-slate-300 p-2 bg-[#adbc9f]">
-                      Amount
-                    </th>
-                    <th className="border border-slate-300 p-2 bg-[#adbc9f]">
-                      Date
-                    </th>
-                    <th className="border border-slate-300 p-2 bg-[#adbc9f]">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredFinancial.slice(0, 3).map((d, index) => (
-                    <tr key={index}>
-                      <td className="text-center text-sm text-bold border border-slate-300 p-2 uppercase">
-                        {d.up_money}
-                      </td>
-                      <td className="text-center text-sm text-bold border border-slate-300 p-2 uppercase">
-                        {d.date}
-                      </td>
-                      <td className="border border-slate-300 p-2">
-                        <div className="flex gap-2 justify-center">
-                          <Link
-                            className="bg-green-500 text-white text-sm py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#12372a]"
-                            to={`#`}>
-                            <FontAwesomeIcon icon={faEdit} />
-                            Edit
-                          </Link>
-                        </div>
-                      </td>
+              <div ref={componentIncomePDF}>
+                <h2 className="text-black text-center">Income</h2>
+                <table className="table-auto mt-1 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5">
+                  <thead>
+                    <tr>
+                      <th className="border border-slate-300 p-2 bg-[#adbc9f]">
+                        Amount
+                      </th>
+                      <th className="border border-slate-300 p-2 bg-[#adbc9f]">
+                        Date
+                      </th>
+                      {!isActionHidden && (
+                        <th className="border border-slate-300 p-2 bg-[#adbc9f]">
+                          Action
+                        </th>
+                      )}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {filteredFinancial.slice(0, 10).map((d, index) => (
+                      <tr key={index}>
+                        <td className="text-center text-sm text-bold border border-slate-300 p-2 uppercase">
+                          {d.up_money}
+                        </td>
+                        <td className="text-center text-sm text-bold border border-slate-300 p-2 uppercase">
+                          {d.date}
+                        </td>
+                        <td
+                          className={`border border-slate-300 p-2 ${
+                            isActionHidden ? "hidden" : ""
+                          }`}>
+                          <div className="flex gap-2 justify-center">
+                            <Link
+                              className="bg-green-500 text-white text-sm py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#12372a]"
+                              to={`#`}>
+                              <FontAwesomeIcon icon={faEdit} />
+                              Edit
+                            </Link>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </motion.div>
           </div>
         </motion.div>
@@ -370,9 +426,7 @@ function ChurchFinancial() {
             variants={fadeIn("down", 0.2)}
             initial="hidden"
             whileInView={"show"}
-            viewport={{ once: true, amount: 0.3 }}>
-            <h3>Expenses</h3>
-          </motion.div>
+            viewport={{ once: true, amount: 0.3 }}></motion.div>
           <div className="form-holder">
             <form>
               <div className="flex flex-wrap items-center justify-center gap-5 pt-2 pb-5">
@@ -426,61 +480,81 @@ function ChurchFinancial() {
                 onChange={handleSearchExpenses}
                 className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               />
+              <button
+                className="bg-blue-500 uppercase text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#2e5491]"
+                onClick={expensesPDF}>
+                Print
+                <FontAwesomeIcon icon={faPrint} />
+              </button>
+              <button
+                className="bg-red-500  uppercase text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#a93737]"
+                onClick={handleExpensesAction}>
+                Action
+                <FontAwesomeIcon icon={isHidden ? faEyeSlash : faEye} />
+              </button>
             </div>
             <motion.div
               variants={fadeIn("up", 0.2)}
               initial="hidden"
               whileInView={"show"}
               viewport={{ once: true, amount: 0.3 }}>
-              <table className="table-auto mt-1 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5">
-                <thead>
-                  <tr>
-                    <th className="border border-slate-300 p-2 bg-[#adbc9f]">
-                      Amount
-                    </th>
-                    <th className="border border-slate-300 p-2 bg-[#adbc9f]">
-                      Purpose
-                    </th>
-                    <th className="border border-slate-300 p-2 bg-[#adbc9f]">
-                      Date
-                    </th>
-                    <th className="border border-slate-300 p-2 bg-[#adbc9f]">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredData.slice(0, 3).map((d, index) => (
-                    <tr key={index}>
-                      <td className="text-center text-sm text-bold border border-slate-300 p-2 uppercase">
-                        {d.amount}
-                      </td>
-                      <td className="text-center text-sm text-bold border border-slate-300 p-2 uppercase">
-                        {d.used_for}
-                      </td>
-                      <td className="text-center text-sm text-bold border border-slate-300 p-2 uppercase">
-                        {d.date}
-                      </td>
-                      <td className="border border-slate-300 p-2">
-                        <div className="flex gap-2 justify-center">
-                          <Link
-                            className="bg-green-500 text-white text-sm py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#12372a]"
-                            to={`/updateFinancial/${d.id}`}>
-                            <FontAwesomeIcon icon={faEdit} />
-                            Edit
-                          </Link>
-                          <button
-                            className="bg-red-500 text-white text-sm py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#a93737]"
-                            onClick={() => handleDelete(d.id)}>
-                            <FontAwesomeIcon icon={faTrash} />
-                            Delete
-                          </button>
-                        </div>
-                      </td>
+              <div ref={componentPDF}>
+                <h2 className="text-black text-center">Expenses</h2>
+                <table className="table-auto mt-1 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5">
+                  <thead>
+                    <tr>
+                      <th className="border border-slate-300 p-2 bg-[#adbc9f]">
+                        Amount
+                      </th>
+                      <th className="border border-slate-300 p-2 bg-[#adbc9f]">
+                        Purpose
+                      </th>
+                      <th className="border border-slate-300 p-2 bg-[#adbc9f]">
+                        Date
+                      </th>
+                      {!isHidden && (
+                        <th className="border border-slate-300 p-2 bg-[#adbc9f]">
+                          Action
+                        </th>
+                      )}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {filteredData.slice(0, 10).map((d, index) => (
+                      <tr key={index}>
+                        <td className="text-center text-sm text-bold border border-slate-300 p-2 uppercase">
+                          {d.amount}
+                        </td>
+                        <td className="text-center text-sm text-bold border border-slate-300 p-2 uppercase">
+                          {d.used_for}
+                        </td>
+                        <td className="text-center text-sm text-bold border border-slate-300 p-2 uppercase">
+                          {d.date}
+                        </td>
+                        <td
+                          className={`border border-slate-300 p-2 ${
+                            isHidden ? "hidden" : ""
+                          }`}>
+                          <div className="flex gap-2 justify-center">
+                            <Link
+                              className="bg-green-500 text-white text-sm py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#12372a]"
+                              to={`/updateFinancial/${d.id}`}>
+                              <FontAwesomeIcon icon={faEdit} />
+                              Edit
+                            </Link>
+                            <button
+                              className="bg-red-500 text-white text-sm py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#a93737]"
+                              onClick={() => handleDelete(d.id)}>
+                              <FontAwesomeIcon icon={faTrash} />
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </motion.div>
           </div>
         </motion.div>

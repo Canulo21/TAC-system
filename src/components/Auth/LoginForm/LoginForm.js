@@ -4,6 +4,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./LoginForm.css";
+import loginImg from "../../../Assets/images/login.png";
 
 function LoginForm({ onLogin }) {
   const [username, setUsername] = useState("");
@@ -98,7 +99,14 @@ function LoginForm({ onLogin }) {
   return (
     <>
       <div className="login-wrapper">
-        <div className="login-holder w-2/6">
+        <div className="login-holder w-1/4 relative">
+          <div className="img-holder">
+            <img
+              className="rounded-full ring-2 ring-gray-300 dark:ring-gray-500 p-2 login-pic"
+              src={loginImg}
+              title="logo"
+              alt="logo"></img>
+          </div>
           <ToastContainer />
           <form onSubmit={handleSubmit}>
             <div className="mb-4">

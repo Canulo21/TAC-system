@@ -53,18 +53,6 @@ function Navigation({ inUserId, inUsedBy, inPicBy, onLogout }) {
     setToggle(false); // Close sidebar after logging out
   };
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:8080/users")
-      .then((res) => {
-        // Assuming the response is an array of users
-        // and you want to get the ID of the first user
-        const currentUserId = res.data[0].user_id;
-        setUserId(currentUserId);
-      })
-      .catch((err) => console.log(err));
-  }, []);
-
   return (
     <>
       <button
@@ -104,7 +92,7 @@ function Navigation({ inUserId, inUsedBy, inPicBy, onLogout }) {
             <FontAwesomeIcon icon={faMoneyBill} /> Financial
           </span>
         </NavLink>
-        <NavLink to={`/updateMember/${userId}`} alt="Profile">
+        <NavLink to={`/updateMember/${inUserId}`} alt="Profile">
           <span>
             <FontAwesomeIcon icon={faUser} /> Profile
           </span>
