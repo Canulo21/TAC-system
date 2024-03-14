@@ -8,7 +8,7 @@ function ChurchExpenses() {
   const [totalIncome, setTotalIncome] = useState("");
   const [totalExpenses, setTotalExpenses] = useState("");
   const [filter, setFilter] = useState([]);
-  const [coh, setCoh] = useState("");
+  const [coh, setCoh] = useState(0);
   const [toggleCurrentMonth, setToggleCurrentMonth] = useState(false);
   const [toggleCurrentYear, setToggleCurrentYear] = useState(false);
 
@@ -93,11 +93,6 @@ function ChurchExpenses() {
       return;
     }
 
-    if (totalIncome.length !== totalExpenses.length) {
-      console.error("totalIncome and totalExpenses lengths are not equal");
-      return;
-    }
-
     const sumOfTotalIncome = totalIncome.reduce(
       (acc, income) => acc + income,
       0
@@ -119,7 +114,6 @@ function ChurchExpenses() {
       setTotal(monthlyTotals);
     }
   }, [totalIncome, totalExpenses, toggleCurrentMonth, toggleCurrentYear]);
-
   const data = {
     labels: filter,
     datasets: [
@@ -146,7 +140,6 @@ function ChurchExpenses() {
       },
     ],
   };
-
   const chartOptions = {
     indexAxis: "x", // Set to 'y' for a vertical bar graph
     scales: {
@@ -180,7 +173,6 @@ function ChurchExpenses() {
       },
     },
   };
-
   return (
     <div className="text-center">
       <h3>Church Financial status</h3>
@@ -208,7 +200,6 @@ function ChurchExpenses() {
           </p>
         </div>
       </div>
-
       <div className="pt-5 charts" style={{ width: "100%", height: "auto" }}>
         <Bar data={data} options={chartOptions} />
       </div>

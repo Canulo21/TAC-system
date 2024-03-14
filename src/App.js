@@ -39,7 +39,7 @@ function App() {
     setInUsedBy(usedBy);
     setInPicdBy(picBy);
 
-    // Save authentication state to localStorage
+    // Save authentication state to localStorage after updating the state
     localStorage.setItem("authenticated", "true");
     localStorage.setItem("inUserId", userId);
     localStorage.setItem("inUsedBy", usedBy);
@@ -77,7 +77,7 @@ function App() {
     <Router>
       <div className="app">
         <div className="holder-loader">
-          <div id="loader" class="loader"></div>
+          <div id="loader" className="loader"></div>
         </div>
         {authenticated && (
           <Navigation

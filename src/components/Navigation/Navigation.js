@@ -13,11 +13,9 @@ import {
   faMoneyBill,
 } from "@fortawesome/free-solid-svg-icons";
 import MenuLogo from "../../Assets/images/menu-logo.png";
-import axios from "axios";
 
 function Navigation({ inUserId, inUsedBy, inPicBy, onLogout }) {
   const [toggle, setToggle] = useState(false);
-  const [userId, setUserId] = useState([]);
 
   const onToggle = () => {
     setToggle(!toggle);

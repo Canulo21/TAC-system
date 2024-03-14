@@ -25,7 +25,7 @@ import { Link } from "react-router-dom";
 function Registration() {
   const [avatar, setAvatar] = useState(null);
   const [data, setData] = useState([]);
-  const [avatarUrl, setAvatarUrl] = useState(avatarProfile);
+  const [avatarUrl] = useState(avatarProfile);
   const [birthDate, setBirthDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
