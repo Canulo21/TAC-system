@@ -4,35 +4,25 @@ import { Bar } from "react-chartjs-2";
 import "./ChurchFinancial.css";
 
 function ChurchExpenses() {
-  const [total, setTotal] = useState("");
-  const [totalIncome, setTotalIncome] = useState("");
-  const [totalExpenses, setTotalExpenses] = useState("");
+  const [total, setTotal] = useState([]);
+  const [totalIncome, setTotalIncome] = useState([]);
+  const [totalExpenses, setTotalExpenses] = useState([]);
   const [filter, setFilter] = useState([]);
   const [coh, setCoh] = useState(0);
   const [toggleCurrentMonth, setToggleCurrentMonth] = useState(false);
   const [toggleCurrentYear, setToggleCurrentYear] = useState(false);
 
-  const getTotalIncome = async (month) => {
+  const fetchTotalIncomeAndExpenses = async (month) => {
     try {
-      const response = await axios.get(
+      const incomeResponse = await axios.get(
         `http://localhost:8080/getTotalIncome?month=${month}`
       );
-      const totalIncomeArray = response.data.map((item) => item.totalIncome);
-      setTotalIncome(totalIncomeArray);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+      setTotalIncome(incomeResponse.data.map((item) => item.totalIncome));
 
-  const getTotalExpenses = async (month) => {
-    try {
-      const response = await axios.get(
+      const expensesResponse = await axios.get(
         `http://localhost:8080/getTotalExpenses?month=${month}`
       );
-      const totalExpensesArray = response.data.map(
-        (item) => item.totalExpenses
-      );
-      setTotalExpenses(totalExpensesArray);
+      setTotalExpenses(expensesResponse.data.map((item) => item.totalExpenses));
     } catch (err) {
       console.error(err);
     }
@@ -43,38 +33,10 @@ function ChurchExpenses() {
       month: "long",
     });
 
-    console.log("Current month:", getCurrentMonth); // Check if the current month is correct
-
-    // Set the filter as an array with a single element
     setFilter([getCurrentMonth]);
-
-    try {
-      // Fetch data for the current month
-      const response = await axios.get(
-        `http://localhost:8080/getTotalIncome?month=${getCurrentMonth}`
-      );
-      console.log("Total income response:", response.data); // Log the response to see if it's correct
-      const totalIncomeArray = response.data.map((item) => item.totalIncome);
-      setTotalIncome(totalIncomeArray);
-    } catch (err) {
-      console.log(err);
-    }
-
-    try {
-      const response = await axios.get(
-        `http://localhost:8080/getTotalExpenses?month=${getCurrentMonth}`
-      );
-      console.log("Total expenses response:", response.data); // Log the response to see if it's correct
-      const totalExpensesArray = response.data.map(
-        (item) => item.totalExpenses
-      );
-      setTotalExpenses(totalExpensesArray);
-    } catch (err) {
-      console.error(err);
-    }
-
-    setToggleCurrentMonth(!toggleCurrentMonth);
-    setToggleCurrentYear(false); // Ensure the other toggle is set to false
+    await fetchTotalIncomeAndExpenses(getCurrentMonth);
+    setToggleCurrentMonth(true);
+    setToggleCurrentYear(false);
   };
 
   const getFilterByYearAndMonths = async () => {
@@ -82,8 +44,7 @@ function ChurchExpenses() {
       const response = await axios.get(
         "http://localhost:8080/getTotalExpenses"
       );
-
-      const currentYear = new Date().getFullYear(); // Get the current year
+      const currentYear = new Date().getFullYear();
 
       const monthArray = response.data.map((item) => {
         const numericMonth = item.MONTH;
@@ -94,49 +55,38 @@ function ChurchExpenses() {
         ).toLocaleString("en-US", { month: "long" });
         return monthString;
       });
-      setToggleCurrentYear(!toggleCurrentYear);
+
+      setToggleCurrentYear(true);
       setToggleCurrentMonth(false);
       setFilter(monthArray);
     } catch (err) {
-      // Handle errors here
+      console.error(err);
     }
   };
 
   useEffect(() => {
-    // Fetch default data for the current month
     getFilterByMonth();
-  }, []); // Empty dependency array to run only once when the component mounts
+  }, []);
 
   useEffect(() => {
-    if (totalIncome === undefined || totalExpenses === undefined) {
-      return;
-    }
-
-    if (!Array.isArray(totalIncome) || !Array.isArray(totalExpenses)) {
-      return;
-    }
-
-    const sumOfTotalIncome = totalIncome.reduce(
-      (acc, income) => acc + income,
-      0
-    );
-    const sumOfTotalExpenses = totalExpenses.reduce(
-      (acc, expenses) => acc + expenses,
-      0
-    );
-    const coh = sumOfTotalIncome - sumOfTotalExpenses;
-    setCoh(coh);
-
     if (totalIncome.length > 0 && totalExpenses.length > 0) {
-      // Calculate the total income and total expenses for each month
+      const sumOfTotalIncome = totalIncome.reduce(
+        (acc, income) => acc + income,
+        0
+      );
+      const sumOfTotalExpenses = totalExpenses.reduce(
+        (acc, expenses) => acc + expenses,
+        0
+      );
+      const coh = sumOfTotalIncome - sumOfTotalExpenses;
+      setCoh(coh);
       const monthlyTotals = totalIncome.map(
         (income, index) => income - totalExpenses[index]
       );
-
-      // Set total as an array containing the total for each month
       setTotal(monthlyTotals);
     }
   }, [totalIncome, totalExpenses, toggleCurrentMonth, toggleCurrentYear]);
+
   const data = {
     labels: filter,
     datasets: [
@@ -163,39 +113,31 @@ function ChurchExpenses() {
       },
     ],
   };
+
   const chartOptions = {
-    indexAxis: "x", // Set to 'y' for a vertical bar graph
+    indexAxis: "x",
     scales: {
       y: {
         beginAtZero: true,
-        ticks: {
-          color: "#FBFADA", // Set the color of the labels
-        },
+        ticks: { color: "#FBFADA" },
         grid: {
-          color: "rgba(224, 224, 224, 0.5)", // Set the color of the horizontal grid lines
-          borderColor: "rgba(224, 224, 224, 0.02)", // Set the color of the horizontal grid lines
-          lineWidth: 1, // Set the width of the horizontal grid lines
+          color: "rgba(224, 224, 224, 0.5)",
+          borderColor: "rgba(224, 224, 224, 0.02)",
+          lineWidth: 1,
         },
       },
       x: {
-        ticks: {
-          color: "#FBFADA", // Set the color of the labels
-        },
+        ticks: { color: "#FBFADA" },
         grid: {
-          color: "rgba(224, 224, 224, 0.5)", // Set the color of the horizontal grid lines
-          borderColor: "rgba(224, 224, 224, 0.02)", // Set the color of the horizontal grid lines
-          lineWidth: 1, // Set the width of the horizontal grid lines
+          color: "rgba(224, 224, 224, 0.5)",
+          borderColor: "rgba(224, 224, 224, 0.02)",
+          lineWidth: 1,
         },
       },
     },
-    plugins: {
-      legend: {
-        labels: {
-          color: "#FBFADA", // Set the color of the dataset labels
-        },
-      },
-    },
+    plugins: { legend: { labels: { color: "#FBFADA" } } },
   };
+
   return (
     <div className="text-center">
       <h3>Church Financial status</h3>
@@ -218,8 +160,7 @@ function ChurchExpenses() {
         </div>
         <div>
           <p className="text-bold">
-            C.O.H:
-            <span className="ml-2">₱{coh}</span>
+            C.O.H: <span className="ml-2">₱{coh}</span>
           </p>
         </div>
       </div>

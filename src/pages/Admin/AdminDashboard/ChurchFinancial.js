@@ -356,12 +356,6 @@ function ChurchFinancial() {
                 Print
                 <FontAwesomeIcon icon={faPrint} />
               </button>
-              <button
-                className="bg-red-500  uppercase text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#a93737]"
-                onClick={handleIncomeAction}>
-                Action
-                <FontAwesomeIcon icon={isActionHidden ? faEyeSlash : faEye} />
-              </button>
             </div>
             <motion.div
               variants={fadeIn("up", 0.2)}
@@ -379,11 +373,6 @@ function ChurchFinancial() {
                       <th className="border border-slate-300 p-2 bg-[#adbc9f]">
                         Date
                       </th>
-                      {!isActionHidden && (
-                        <th className="border border-slate-300 p-2 bg-[#adbc9f]">
-                          Action
-                        </th>
-                      )}
                     </tr>
                   </thead>
                   <tbody>
@@ -394,19 +383,6 @@ function ChurchFinancial() {
                         </td>
                         <td className="text-center text-sm text-bold border border-slate-300 p-2 uppercase">
                           {d.date}
-                        </td>
-                        <td
-                          className={`border border-slate-300 p-2 ${
-                            isActionHidden ? "hidden" : ""
-                          }`}>
-                          <div className="flex gap-2 justify-center">
-                            <Link
-                              className="bg-green-500 text-white text-sm py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#12372a]"
-                              to={`#`}>
-                              <FontAwesomeIcon icon={faEdit} />
-                              Edit
-                            </Link>
-                          </div>
                         </td>
                       </tr>
                     ))}

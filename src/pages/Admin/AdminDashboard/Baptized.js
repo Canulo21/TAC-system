@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 
 function Baptized() {
+  const [filteredData, setFilteredData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isBaptized, setIsBaptized] = useState(0);
   const [notBaptized, setNotBaptized] = useState(0);
-  const [selectBaptized, setSelectBaptized] = useState(null);
   const [baptizedYes, setBaptizedYes] = useState([]);
   const [baptizedNo, setBaptizedNo] = useState([]);
   const [showBaptizedModal, setShowBaptizedModal] = useState(false); // New state variable for baptized modal
@@ -73,17 +74,28 @@ function Baptized() {
       </div>
 
       {showBaptizedModal && (
-        <EventModal baptizedYes={baptizedYes} onClose={closeModal} />
+        <EventModal
+          baptizedYes={baptizedYes}
+          onClose={closeModal}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
       )}
 
       {showNotBaptizedModal && (
-        <EventModals baptizedNo={baptizedNo} onClose={closeModal} />
+        <EventModals
+          baptizedNo={baptizedNo}
+          onClose={closeModal}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
       )}
     </>
   );
 }
 
-function EventModal({ baptizedYes, onClose }) {
+function EventModal({ baptizedYes, onClose, searchTerm, setSearchTerm }) {
+  const [filteredBaptizedYes, setFilteredBaptizedYes] = useState([]);
   const modalVariants = {
     hidden: {
       opacity: 0,
@@ -101,6 +113,17 @@ function EventModal({ baptizedYes, onClose }) {
     damping: 20,
   };
 
+  useEffect(() => {
+    const newFilteredData = baptizedYes.filter(
+      (d) =>
+        (d.fname && d.fname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (d.mname && d.mname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (d.lname && d.lname.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+
+    setFilteredBaptizedYes(newFilteredData);
+  }, [searchTerm, baptizedYes]);
+
   return (
     <motion.div
       className="modal absolute event-modal modal-list"
@@ -117,6 +140,16 @@ function EventModal({ baptizedYes, onClose }) {
         </button>
         <h2 className="text-black">List Of Baptized</h2>
         <div className="pt-5">
+          <div className="search-holder flex items-center gap-2 mt-10">
+            <FontAwesomeIcon className="text-black text-xl" icon={faSearch} />
+            <input
+              type="text"
+              placeholder="Search by Name"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            />
+          </div>
           <table className="table-auto mt-2 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5 ">
             <thead className="bg-[#ADBC9F]">
               <tr>
@@ -127,7 +160,7 @@ function EventModal({ baptizedYes, onClose }) {
               </tr>
             </thead>
             <tbody>
-              {baptizedYes.map((person, index) => (
+              {filteredBaptizedYes.map((person, index) => (
                 <tr key={index} className="text-center">
                   <td className="border border-slate-300 p-2 ">
                     {person.user_id}
@@ -151,7 +184,8 @@ function EventModal({ baptizedYes, onClose }) {
   );
 }
 
-function EventModals({ baptizedNo, onClose }) {
+function EventModals({ baptizedNo, onClose, searchTerm, setSearchTerm }) {
+  const [filteredBaptizedNo, setFilteredBaptizedNo] = useState([]);
   const modalVariants = {
     hidden: {
       opacity: 0,
@@ -169,6 +203,17 @@ function EventModals({ baptizedNo, onClose }) {
     damping: 20,
   };
 
+  useEffect(() => {
+    const newFilteredData = baptizedNo.filter(
+      (d) =>
+        (d.fname && d.fname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (d.mname && d.mname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (d.lname && d.lname.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+
+    setFilteredBaptizedNo(newFilteredData);
+  }, [searchTerm, baptizedNo]);
+
   return (
     <motion.div
       className="modal absolute event-modal modal-list"
@@ -185,6 +230,16 @@ function EventModals({ baptizedNo, onClose }) {
         </button>
         <h2 className="text-black">List of Those Not Yet Baptized</h2>
         <div className="pt-5">
+          <div className="search-holder flex items-center gap-2 mt-10">
+            <FontAwesomeIcon className="text-black text-xl" icon={faSearch} />
+            <input
+              type="text"
+              placeholder="Search by Name"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            />
+          </div>
           <table className="table-auto mt-2 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5 ">
             <thead className="bg-[#ADBC9F]">
               <tr>
@@ -195,7 +250,7 @@ function EventModals({ baptizedNo, onClose }) {
               </tr>
             </thead>
             <tbody>
-              {baptizedNo.map((person, index) => (
+              {filteredBaptizedNo.map((person, index) => (
                 <tr key={index} className="text-center">
                   <td className="border border-slate-300 p-2 ">
                     {person.user_id}
