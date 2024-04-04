@@ -87,8 +87,16 @@ app.get("/gender", (req, res) => {
 // Registration of members
 app.post("/addMember", upload.single("file"), async (req, res) => {
   try {
-    const { fname, mname, lname, gender, birthdate, category, position } =
-      req.body;
+    const {
+      fname,
+      mname,
+      lname,
+      gender,
+      birthdate,
+      category,
+      baptized,
+      position,
+    } = req.body;
     const profile_pic_url = req.file ? req.file.filename : null; // Check if a file was uploaded
 
     if (
@@ -97,6 +105,7 @@ app.post("/addMember", upload.single("file"), async (req, res) => {
       !gender ||
       !birthdate ||
       !category ||
+      !baptized ||
       !position ||
       !profile_pic_url
     ) {
@@ -128,7 +137,7 @@ app.post("/addMember", upload.single("file"), async (req, res) => {
           } else {
             // Proceed with the insertion logic
             const insertQuery =
-              "INSERT INTO users (fname, mname, lname, gender, birthdate, category, position, profile_pic_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+              "INSERT INTO users (fname, mname, lname, gender, birthdate, category, baptized, position, profile_pic_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             db.query(
               insertQuery,
@@ -139,6 +148,7 @@ app.post("/addMember", upload.single("file"), async (req, res) => {
                 gender,
                 birthdate,
                 category,
+                baptized,
                 position,
                 profile_pic_url,
               ],
@@ -220,13 +230,32 @@ app.put("/updateMember/:id", (req, res) => {
   const userId = req.params.id;
   const { data } = req.body; // Destructure 'data' from req.body
 
-  const { fname, mname, lname, birthdate, gender, position, category } = data;
+  const {
+    fname,
+    mname,
+    lname,
+    birthdate,
+    gender,
+    position,
+    category,
+    baptized,
+  } = data;
   const query =
-    "UPDATE users SET `fname`=?, `mname`=?, `lname`=?, `birthdate`=?, `gender`=?, `position`=?, `category`=? WHERE user_id = ?";
+    "UPDATE users SET `fname`=?, `mname`=?, `lname`=?, `birthdate`=?, `gender`=?, `position`=?, `category`=?, `baptized`=? WHERE user_id = ?";
 
   db.query(
     query,
-    [fname, mname, lname, birthdate, gender, position, category, userId],
+    [
+      fname,
+      mname,
+      lname,
+      birthdate,
+      gender,
+      position,
+      category,
+      baptized,
+      userId,
+    ],
     (queryError, result) => {
       if (queryError) {
         console.error("updateError", queryError);
@@ -564,4 +593,19 @@ app.listen(8080, () => {
   console.log("Server is running on port 8080");
 });
 
-// testting for pulls
+// for getting baptized
+app.get("/getIsBaptized", (req, res) => {
+  // const query = "SELECT SUM(up_money) AS totalIncome FROM financial_up_money";
+  const query = "SELECT * FROM users WHERE baptized = 'Yes' Or baptized = 'No'";
+
+  db.query(query, (err, data) => {
+    if (err) {
+      return res.status(500).json({ Message: "Error" });
+    }
+
+    // The result is an array of objects. Access the totalIncome using data[0].totalIncome
+    // const totalIncome = data[0].totalIncome;
+
+    return res.json(data);
+  });
+});

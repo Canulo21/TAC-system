@@ -23,7 +23,7 @@ function EventModal({ event, onClose }) {
 
   return (
     <motion.div
-      className="modal absolute event-modal"
+      className="modal absolute event-modal modal-list"
       variants={modalVariants}
       initial="hidden"
       animate="visible"

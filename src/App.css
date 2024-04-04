@@ -1,1 +1,8 @@
+.modal-list {
+    background: rgba(18, 55, 42, .8);
+    z-index: 1;
+}
 
+table td {
+    cursor: pointer;
+}

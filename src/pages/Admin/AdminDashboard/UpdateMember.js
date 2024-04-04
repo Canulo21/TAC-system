@@ -28,6 +28,7 @@ function UpdateMember() {
     gender: "",
     birthdate: "",
     category: "",
+    baptized: "",
     position: "",
   });
 
@@ -49,6 +50,7 @@ function UpdateMember() {
             gender: memberData.gender || "",
             birthdate: memberData.birthdate || "",
             category: memberData.category || "",
+            baptized: memberData.baptized || "",
             position: memberData.position || "",
           });
         }
@@ -283,7 +285,7 @@ function UpdateMember() {
               </div>
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
-              <div className="px-3 mb-6 md:mb-0 md:w-1/4">
+              <div className="px-3 mb-6 md:mb-0 md:w-1/5">
                 <label
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   htmlFor="grid-birth-date">
@@ -312,7 +314,7 @@ function UpdateMember() {
                   </div>
                 </div>
               </div>
-              <div className="w-full md:w-1/4 px-3">
+              <div className="w-full md:w-1/5 px-3">
                 <label
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   htmlFor="grid-last-name">
@@ -340,7 +342,7 @@ function UpdateMember() {
                   </div>
                 </div>
               </div>
-              <div className="w-full md:w-1/4 px-3">
+              <div className="w-full md:w-1/5 px-3">
                 <label
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   htmlFor="grid-last-name">
@@ -372,7 +374,7 @@ function UpdateMember() {
                   </div>
                 </div>
               </div>
-              <div className="w-full md:w-1/4 px-3">
+              <div className="w-full md:w-1/5 px-3">
                 <label
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   htmlFor="grid-last-name">
@@ -396,6 +398,33 @@ function UpdateMember() {
                     <option value="Womens">Womens</option>
                     <option value="Young People">Young People</option>
                     <option value="Kids">Kids</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <FontAwesomeIcon icon={faChevronDown} />
+                  </div>
+                </div>
+              </div>
+              <div className="w-full md:w-1/5 px-3">
+                <label
+                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                  htmlFor="grid-last-name">
+                  Baptized
+                  <span className="text-red-600 font-bold text-lg"> *</span>
+                </label>
+                <div className="relative">
+                  <select
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    id="grid-last-name"
+                    name="baptized"
+                    value={formData.baptized}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        baptized: e.target.value,
+                      })
+                    }>
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <FontAwesomeIcon icon={faChevronDown} />

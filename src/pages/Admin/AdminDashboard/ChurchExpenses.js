@@ -43,12 +43,35 @@ function ChurchExpenses() {
       month: "long",
     });
 
+    console.log("Current month:", getCurrentMonth); // Check if the current month is correct
+
     // Set the filter as an array with a single element
     setFilter([getCurrentMonth]);
 
-    // Fetch data for the current month
-    await getTotalIncome(getCurrentMonth);
-    await getTotalExpenses(getCurrentMonth);
+    try {
+      // Fetch data for the current month
+      const response = await axios.get(
+        `http://localhost:8080/getTotalIncome?month=${getCurrentMonth}`
+      );
+      console.log("Total income response:", response.data); // Log the response to see if it's correct
+      const totalIncomeArray = response.data.map((item) => item.totalIncome);
+      setTotalIncome(totalIncomeArray);
+    } catch (err) {
+      console.log(err);
+    }
+
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/getTotalExpenses?month=${getCurrentMonth}`
+      );
+      console.log("Total expenses response:", response.data); // Log the response to see if it's correct
+      const totalExpensesArray = response.data.map(
+        (item) => item.totalExpenses
+      );
+      setTotalExpenses(totalExpensesArray);
+    } catch (err) {
+      console.error(err);
+    }
 
     setToggleCurrentMonth(!toggleCurrentMonth);
     setToggleCurrentYear(false); // Ensure the other toggle is set to false

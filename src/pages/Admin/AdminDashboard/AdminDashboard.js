@@ -11,6 +11,7 @@ import ChurchEvents from "./ChurchEvents";
 //motion
 import { motion } from "framer-motion";
 import { fadeIn } from "../../../variants";
+import Baptized from "./Baptized";
 
 function AdminDashboard() {
   const [categoryCounts, setCategoryCounts] = useState({
@@ -122,14 +123,24 @@ function AdminDashboard() {
           <ChurchPopulation />
         </motion.div>
       </div>
-      <motion.div
-        variants={fadeIn("up", 0.4)}
-        initial="hidden"
-        whileInView={"show"}
-        viewport={{ once: true, amount: 0.5 }}
-        className="p-5 border-2 border-green-50 rounded-xl mt-5 w-3/5">
-        <ChurchEvents />
-      </motion.div>
+      <div className="middle-part flex justify-between gap-5">
+        <motion.div
+          variants={fadeIn("up", 0.4)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: true, amount: 0.5 }}
+          className="p-5 border-2 border-green-50 rounded-xl mt-5 w-3/5">
+          <ChurchEvents />
+        </motion.div>
+        <motion.div
+          variants={fadeIn("up", 0.4)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: true, amount: 0.5 }}
+          className="p-5 border-2 border-green-50 rounded-xl mt-5 w-3/5">
+          <Baptized />
+        </motion.div>
+      </div>
     </>
   );
 }
