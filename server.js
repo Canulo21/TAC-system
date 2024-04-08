@@ -344,17 +344,30 @@ app.post("/upMoney", (req, res) => {
 
 app.get("/getTotalIncome", (req, res) => {
   // const query = "SELECT SUM(up_money) AS totalIncome FROM financial_up_money";
-  const query =
-    "SELECT MONTH(DATE) AS MONTH, SUM(up_money) AS totalIncome FROM financial_up_money GROUP BY MONTH";
+  const query = "SELECT SUM(up_money) As totalIncome From financial_up_money";
 
   db.query(query, (err, data) => {
     if (err) {
       return res.status(500).json({ Message: "Error" });
     }
 
-    // The result is an array of objects. Access the totalIncome using data[0].totalIncome
-    // const totalIncome = data[0].totalIncome;
+    return res.json(data);
+  });
+});
 
+// by year
+app.get("/getTotalIncomeByYear", (req, res) => {
+  const year = req.query.year;
+  const query = `
+    SELECT MONTH(DATE) AS MONTH, SUM(up_money) AS totalIncome 
+    FROM financial_up_money 
+    WHERE YEAR(DATE) = ?
+    GROUP BY MONTH
+  `;
+  db.query(query, [year], (err, data) => {
+    if (err) {
+      return res.status(500).json({ Message: "Error" });
+    }
     return res.json(data);
   });
 });
@@ -371,15 +384,30 @@ app.get("/expenses", (req, res) => {
   });
 });
 app.get("/getTotalExpenses", (req, res) => {
-  // const query = "SELECT SUM(amount) AS totalExpenses FROM financial_expenses";
-  const query =
-    "SELECT MONTH(DATE) AS MONTH, SUM(amount) AS totalExpenses FROM financial_expenses GROUP BY MONTH";
+  const query = "SELECT SUM(amount) As totalExpenses From financial_expenses";
 
   db.query(query, (err, data) => {
     if (err) {
       return res.status(500).json({ Message: "Error" });
     }
 
+    return res.json(data);
+  });
+});
+
+// by year
+app.get("/getTotalExpensesByYear", (req, res) => {
+  const year = req.query.year;
+  const query = `
+    SELECT MONTH(DATE) AS MONTH, SUM(amount) AS totalExpenses 
+    FROM financial_expenses 
+    WHERE YEAR(DATE) = ?
+    GROUP BY MONTH
+  `;
+  db.query(query, [year], (err, data) => {
+    if (err) {
+      return res.status(500).json({ Message: "Error" });
+    }
     return res.json(data);
   });
 });

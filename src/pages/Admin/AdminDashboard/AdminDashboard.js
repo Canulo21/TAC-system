@@ -4,6 +4,7 @@ import mensPic from "../../../Assets/images/mens.png";
 import womensPic from "../../../Assets/images/womens.png";
 import youngPeoplePic from "../../../Assets/images/yp.png";
 import kidsPic from "../../../Assets/images/kid.png";
+import cake from "../../../Assets/images/cake.png";
 import ChurchPopulation from "./ChurchPopulation";
 import ChurchExpenses from "./ChurchExpenses";
 import ChurchEvents from "./ChurchEvents";
@@ -140,6 +141,16 @@ function AdminDashboard() {
           className="p-5 border-2 border-green-50 rounded-xl mt-5 w-3/5">
           <Baptized />
         </motion.div>
+      </div>
+
+      {/* for birthday notification */}
+      <div className="w-auto fixed top-12 right-10">
+        <div className="bg-[#FBFADA] w-fit p-3 rounded-full shadow-lg relative">
+          <span className="absolute bg-red-700 text-xl font-semibold text-gray-50 px-3 py-1 rounded-full -right-1 -top-1">
+            3
+          </span>
+          <img src={cake} alt="cake"></img>
+        </div>
       </div>
     </>
   );

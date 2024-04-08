@@ -1,114 +1,143 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Bar } from "react-chartjs-2";
 import "./ChurchFinancial.css";
 
 function ChurchExpenses() {
-  const [total, setTotal] = useState([]);
+  const currentYear = new Date().getFullYear(); // Get the current year
   const [totalIncome, setTotalIncome] = useState([]);
   const [totalExpenses, setTotalExpenses] = useState([]);
   const [filter, setFilter] = useState([]);
+  const [total, setTotal] = useState([]);
   const [coh, setCoh] = useState(0);
-  const [toggleCurrentMonth, setToggleCurrentMonth] = useState(false);
-  const [toggleCurrentYear, setToggleCurrentYear] = useState(false);
+  const [selectedYear, setSelectedYear] = useState(currentYear); // Set selectedYear to the current year by default
+  const [hasData, setHasData] = useState(true); // Flag to indicate if there is data for the selected year
 
-  const fetchTotalIncomeAndExpenses = async (month) => {
+  const getYear = async () => {
     try {
+      // Fetch data for the selected year
       const incomeResponse = await axios.get(
-        `http://localhost:8080/getTotalIncome?month=${month}`
+        `http://localhost:8080/getTotalIncomeByYear`,
+        {
+          params: {
+            year: selectedYear,
+          },
+        }
       );
-      setTotalIncome(incomeResponse.data.map((item) => item.totalIncome));
 
       const expensesResponse = await axios.get(
-        `http://localhost:8080/getTotalExpenses?month=${month}`
+        `http://localhost:8080/getTotalExpensesByYear`,
+        {
+          params: {
+            year: selectedYear,
+          },
+        }
       );
-      setTotalExpenses(expensesResponse.data.map((item) => item.totalExpenses));
-    } catch (err) {
-      console.error(err);
+
+      // Extract month and corresponding data for income and expenses
+      const incomeData = incomeResponse.data.reduce((acc, item) => {
+        acc[item.MONTH] = item.totalIncome;
+        return acc;
+      }, {});
+
+      const expensesData = expensesResponse.data.reduce((acc, item) => {
+        acc[item.MONTH] = item.totalExpenses;
+        return acc;
+      }, {});
+
+      // Combine income and expenses data
+      const mergedData = Array.from({ length: 12 }, (_, i) => ({
+        month: i + 1,
+        income: incomeData[i + 1] || 0,
+        expenses: expensesData[i + 1] || 0,
+      }));
+
+      // Filter the months that have data
+      const monthsWithData = mergedData.filter(
+        (item) => item.income || item.expenses
+      );
+
+      // Update state
+      setTotalIncome(monthsWithData.map((item) => item.income));
+      setTotalExpenses(monthsWithData.map((item) => item.expenses));
+      setFilter(monthsWithData.map((item) => item.month));
+      setHasData(monthsWithData.length > 0); // Update hasData based on whether there is data for the selected year
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setHasData(false); // Set hasData to false since there is no data for the selected year
     }
   };
 
-  const getFilterByMonth = async () => {
-    const getCurrentMonth = new Date().toLocaleString([], {
-      month: "long",
-    });
-
-    setFilter([getCurrentMonth]);
-    await fetchTotalIncomeAndExpenses(getCurrentMonth);
-    setToggleCurrentMonth(true);
-    setToggleCurrentYear(false);
-  };
-
-  const getFilterByYearAndMonths = async () => {
+  const getCoh = async () => {
     try {
-      const response = await axios.get(
+      const cohTotalIncome = await axios.get(
+        "http://localhost:8080/getTotalIncome"
+      );
+      const cohTotalExpenses = await axios.get(
         "http://localhost:8080/getTotalExpenses"
       );
-      const currentYear = new Date().getFullYear();
 
-      const monthArray = response.data.map((item) => {
-        const numericMonth = item.MONTH;
-        const monthString = new Date(
-          currentYear,
-          numericMonth - 1,
-          1
-        ).toLocaleString("en-US", { month: "long" });
-        return monthString;
-      });
+      const cohIncomeValue = cohTotalIncome.data[0].totalIncome;
+      const cohExpensesValue = cohTotalExpenses.data[0].totalExpenses;
 
-      setToggleCurrentYear(true);
-      setToggleCurrentMonth(false);
-      setFilter(monthArray);
-    } catch (err) {
-      console.error(err);
-    }
+      setCoh(cohIncomeValue - cohExpensesValue);
+    } catch (err) {}
   };
 
   useEffect(() => {
-    getFilterByMonth();
-  }, []);
+    if (selectedYear) {
+      getYear();
+    }
+  }, [selectedYear]);
+
+  const getMonthName = (month) => {
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    return monthNames[month - 1];
+  };
 
   useEffect(() => {
-    if (totalIncome.length > 0 && totalExpenses.length > 0) {
-      const sumOfTotalIncome = totalIncome.reduce(
-        (acc, income) => acc + income,
-        0
-      );
-      const sumOfTotalExpenses = totalExpenses.reduce(
-        (acc, expenses) => acc + expenses,
-        0
-      );
-      const coh = sumOfTotalIncome - sumOfTotalExpenses;
-      setCoh(coh);
-      const monthlyTotals = totalIncome.map(
-        (income, index) => income - totalExpenses[index]
-      );
-      setTotal(monthlyTotals);
-    }
-  }, [totalIncome, totalExpenses, toggleCurrentMonth, toggleCurrentYear]);
+    const monthlyTotals = totalIncome.map(
+      (income, index) => income - totalExpenses[index]
+    );
+    setTotal(monthlyTotals);
+    getCoh();
+  }, [totalIncome, totalExpenses]);
 
   const data = {
-    labels: filter,
+    labels: filter.map((month) => getMonthName(month)),
     datasets: [
       {
         label: "Income",
         data: totalIncome,
-        backgroundColor: ["rgba(54, 162, 235, 0.9)", "rgba(54, 162, 235, 0.9)"],
-        borderColor: ["#FBFADA", "#FBFADA"],
+        backgroundColor: "rgba(54, 162, 235, 0.9)",
+        borderColor: "#FBFADA",
         borderWidth: 2,
       },
       {
         label: "Expenses",
         data: totalExpenses,
-        backgroundColor: ["rgba(255, 99, 132, 0.9)", "rgba(255, 99, 132, 0.9)"],
-        borderColor: ["#FBFADA", "#FBFADA"],
+        backgroundColor: "rgba(255, 99, 132, 0.9)",
+        borderColor: "#FBFADA",
         borderWidth: 2,
       },
       {
         label: "Total",
         data: total,
-        backgroundColor: ["rgba(75, 192, 192, 0.9)", "rgba(75, 192, 192, 0.9)"],
-        borderColor: ["#FBFADA", "#FBFADA"],
+        backgroundColor: "rgba(75, 192, 192, 0.9)",
+        borderColor: "#FBFADA",
         borderWidth: 2,
       },
     ],
@@ -143,20 +172,15 @@ function ChurchExpenses() {
       <h3>Church Financial status</h3>
       <div className="flex items-center justify-between">
         <div className="btn-holder flex gap-2 pt-2">
-          <button
-            className={`bg-[#FBFADA] btn px-2 py-1 text-xs rounded-md${
-              toggleCurrentMonth ? " active" : ""
-            }`}
-            onClick={getFilterByMonth}>
-            Current Month
-          </button>
-          <button
-            className={`bg-[#FBFADA] btn px-2 py-1 text-xs rounded-md${
-              toggleCurrentYear ? " active" : ""
-            }`}
-            onClick={getFilterByYearAndMonths}>
-            Current Year
-          </button>
+          <div>
+            <input
+              type="number"
+              placeholder="Enter year"
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="bg-[#FBFADA] px-2 py-1 text-xs rounded-md"
+            />
+          </div>
         </div>
         <div>
           <p className="text-bold">
@@ -165,7 +189,13 @@ function ChurchExpenses() {
         </div>
       </div>
       <div className="pt-5 charts" style={{ width: "100%", height: "auto" }}>
-        <Bar data={data} options={chartOptions} />
+        {hasData ? (
+          <Bar data={data} options={chartOptions} />
+        ) : (
+          <p className="text-3xl text-center text-bold pt-20">
+            No record for the inputted year
+          </p>
+        )}
       </div>
     </div>
   );
