@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
+require("dotenv").config();
 
 const app = express();
 app.use(cors());
@@ -27,10 +28,10 @@ const upload = multer({
 app.use("/profilepics/:id", express.static("public/profilepics"));
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "react_tc",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 // for login form
