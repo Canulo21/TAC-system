@@ -14,4 +14,7 @@ npm install react-scripts --save
 
 npm install -g nodemon
 
+### Run build
+yarn dev
+
 
