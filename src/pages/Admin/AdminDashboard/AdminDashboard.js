@@ -4,7 +4,6 @@ import mensPic from "../../../Assets/images/mens.png";
 import womensPic from "../../../Assets/images/womens.png";
 import youngPeoplePic from "../../../Assets/images/yp.png";
 import kidsPic from "../../../Assets/images/kid.png";
-import cake from "../../../Assets/images/cake.png";
 import ChurchPopulation from "./ChurchPopulation";
 import ChurchExpenses from "./ChurchExpenses";
 import ChurchEvents from "./ChurchEvents";
@@ -13,6 +12,7 @@ import ChurchEvents from "./ChurchEvents";
 import { motion } from "framer-motion";
 import { fadeIn } from "../../../variants";
 import Baptized from "./Baptized";
+import IsBirthday from "./IsBirthday";
 
 function AdminDashboard() {
   const [categoryCounts, setCategoryCounts] = useState({
@@ -53,7 +53,7 @@ function AdminDashboard() {
 
   return (
     <>
-      <div className="">
+      <div className="px-10">
         <motion.div
           variants={fadeIn("down", 0.2)}
           initial="hidden"
@@ -106,7 +106,7 @@ function AdminDashboard() {
           ))}
         </motion.div>
       </div>
-      <div className="middle-part flex justify-between pt-5 gap-5">
+      <div className="middle-part flex justify-between pt-5 gap-5 px-10">
         <motion.div
           variants={fadeIn("right", 0.4)}
           initial="hidden"
@@ -124,7 +124,7 @@ function AdminDashboard() {
           <ChurchPopulation />
         </motion.div>
       </div>
-      <div className="middle-part flex justify-between gap-5">
+      <div className="middle-part flex justify-between gap-5 px-10">
         <motion.div
           variants={fadeIn("up", 0.4)}
           initial="hidden"
@@ -144,13 +144,8 @@ function AdminDashboard() {
       </div>
 
       {/* for birthday notification */}
-      <div className="w-auto fixed top-12 right-10">
-        <div className="bg-[#FBFADA] w-fit p-3 rounded-full shadow-lg relative">
-          <span className="absolute bg-red-700 text-xl font-semibold text-gray-50 px-3 py-1 rounded-full -right-1 -top-1">
-            3
-          </span>
-          <img src={cake} alt="cake"></img>
-        </div>
+      <div className="">
+        <IsBirthday />
       </div>
     </>
   );

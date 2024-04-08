@@ -44,7 +44,8 @@ p {
 
 .app .content {
   padding: 60px 50px 50px;
-  width: 95%;
+  /* width: 95%; */
+  width: 100%;
   margin: auto;
 }
 
@@ -122,4 +123,31 @@ p {
     33%  {background-position:    0% 33% ,100% 33% ,200% 33% }
     66%  {background-position: -100%  66%,0%   66% ,100% 66% }
     100% {background-position:    0% 100%,100% 100%,200% 100%}
+}
+
+
+
+@keyframes wiggle {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(5deg);
+  }
+  50% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(3deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.wiggle {
+  animation: wiggle 0.5s ease-in-out infinite;
+}
+.wiggle:hover {
+  animation-play-state: paused;
 }

@@ -193,7 +193,7 @@ function ChurchExpenses() {
           <Bar data={data} options={chartOptions} />
         ) : (
           <p className="text-3xl text-center text-bold pt-20">
-            No record for the inputted year
+            No record found for the inputted year
           </p>
         )}
       </div>

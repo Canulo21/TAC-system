@@ -623,7 +623,6 @@ app.listen(8080, () => {
 
 // for getting baptized
 app.get("/getIsBaptized", (req, res) => {
-  // const query = "SELECT SUM(up_money) AS totalIncome FROM financial_up_money";
   const query = "SELECT * FROM users WHERE baptized = 'Yes' Or baptized = 'No'";
 
   db.query(query, (err, data) => {
@@ -631,8 +630,19 @@ app.get("/getIsBaptized", (req, res) => {
       return res.status(500).json({ Message: "Error" });
     }
 
-    // The result is an array of objects. Access the totalIncome using data[0].totalIncome
-    // const totalIncome = data[0].totalIncome;
+    return res.json(data);
+  });
+});
+
+// for getting birthday
+app.get("/getIsBirthday", (req, res) => {
+  const query =
+    "SELECT CONCAT(fname, ' ', COALESCE(mname, ''), ' ', lname) AS fullname, birthdate FROM users WHERE(MONTH(birthdate) = MONTH(CURDATE()) AND DAY(birthdate) BETWEEN DAY(CURDATE() - INTERVAL 7 DAY) AND DAY(CURDATE()))";
+
+  db.query(query, (err, data) => {
+    if (err) {
+      return res.status(500).json({ Message: "Error" });
+    }
 
     return res.json(data);
   });
