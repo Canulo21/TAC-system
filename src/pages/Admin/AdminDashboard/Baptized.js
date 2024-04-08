@@ -4,7 +4,6 @@ import { faTimes, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 
 function Baptized() {
-  const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isBaptized, setIsBaptized] = useState(0);
   const [notBaptized, setNotBaptized] = useState(0);

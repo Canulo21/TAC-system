@@ -92,10 +92,10 @@ function ChurchEvents() {
   return (
     <>
       <h3 className="text-center">Events</h3>
-      <div className="pt-5">
+      <div className="pt-5 event-holder">
         {data.length > 0 ? (
           data.map((event, index) => (
-            <div key={index} className="p-3">
+            <div key={index} className="py-5 px-2">
               <p className="text-3xl py-1">
                 <label className="w-36 inline-block text-bold">Title:</label>
                 <button

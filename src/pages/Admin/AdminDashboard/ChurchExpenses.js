@@ -80,7 +80,9 @@ function ChurchExpenses() {
       const cohIncomeValue = cohTotalIncome.data[0].totalIncome;
       const cohExpensesValue = cohTotalExpenses.data[0].totalExpenses;
 
-      setCoh(cohIncomeValue - cohExpensesValue);
+      const cohTotal = (cohIncomeValue - cohExpensesValue).toFixed(2);
+
+      setCoh(parseFloat(cohTotal));
     } catch (err) {}
   };
 

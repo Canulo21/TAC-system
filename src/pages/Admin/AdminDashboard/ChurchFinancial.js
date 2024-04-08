@@ -10,10 +10,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEdit,
   faEye,
-  faEyeDropper,
   faEyeSlash,
   faPrint,
-  faRemove,
   faSearch,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
@@ -27,6 +25,10 @@ function ChurchFinancial() {
   const [useFor, setUseFor] = useState("");
   const [errors, setErrors] = useState({});
   const [errorsIncome, setErrorsIncome] = useState({});
+  const [searchFromDate, setSearchFromDate] = useState("");
+  const [searchToDate, setSearchToDate] = useState("");
+  const [searchIncomeFromDate, setSearchIncomeFromDate] = useState("");
+  const [searchIncomeToDate, setSearchIncomeToDate] = useState("");
 
   const handleUpMoneyChange = (e) => {
     e.preventDefault();
@@ -247,28 +249,45 @@ function ChurchFinancial() {
     }
   };
 
-  const [searchDate, setSearchDate] = useState("");
-
-  const handleSearch = (event) => {
-    setSearchDate(event.target.value);
+  // Add these event handlers to update the search dates
+  const handleSearchFromDate = (event) => {
+    setSearchFromDate(event.target.value);
   };
 
-  const filteredFinancial = financial.filter((d) =>
-    d.date.toLowerCase().includes(searchDate.toLowerCase())
-  );
-
-  const [searchExDate, setSearchExDate] = useState("");
-
-  const handleSearchExpenses = (event) => {
-    setSearchExDate(event.target.value);
+  const handleSearchToDate = (event) => {
+    setSearchToDate(event.target.value);
   };
 
-  const filteredData = data.filter((d) =>
-    d.date.toLowerCase().includes(searchExDate.toLowerCase())
-  );
+  const handleIncomeSearchFromDate = (event) => {
+    setSearchIncomeFromDate(event.target.value);
+  };
+
+  const handleIncomeSearchToDate = (event) => {
+    setSearchIncomeToDate(event.target.value);
+  };
+
+  // Modify the filteredData to filter based on the date range
+  const filteredData = data.filter((d) => {
+    if (searchFromDate && searchToDate) {
+      const fromDate = new Date(searchFromDate);
+      const toDate = new Date(searchToDate);
+      const expenseDate = new Date(d.date);
+      return expenseDate >= fromDate && expenseDate <= toDate;
+    }
+    return true;
+  });
+
+  const filteredFinancial = financial.filter((d) => {
+    if (searchIncomeFromDate && searchIncomeToDate) {
+      const fromDate = new Date(searchIncomeFromDate);
+      const toDate = new Date(searchIncomeToDate);
+      const incomeDate = new Date(d.date);
+      return incomeDate >= fromDate && incomeDate <= toDate;
+    }
+    return true;
+  });
 
   const [isHidden, setIsHidden] = useState(false);
-  const [isActionHidden, setIsActionHidden] = useState(false);
   const componentPDF = useRef();
   const componentIncomePDF = useRef();
 
@@ -288,9 +307,6 @@ function ChurchFinancial() {
     },
   });
 
-  const handleIncomeAction = () => {
-    setIsActionHidden(!isActionHidden);
-  };
   const handleExpensesAction = () => {
     setIsHidden(!isHidden);
   };
@@ -341,13 +357,22 @@ function ChurchFinancial() {
             </form>
           </div>
           <div className="table-holder">
-            <div className="search-holder flex items-center gap-2">
+            <div className="search-holder flex items-center gap-2 pt-5">
               <FontAwesomeIcon icon={faSearch} />
+              <span className="font-bold">From:</span>
               <input
-                type="text"
-                placeholder="Search by Date"
-                value={searchDate}
-                onChange={handleSearch}
+                type="date"
+                placeholder="Search Date From"
+                value={searchIncomeFromDate}
+                onChange={handleIncomeSearchFromDate}
+                className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              />
+              <span className="font-bold">To:</span>
+              <input
+                type="date"
+                placeholder="Search Date To"
+                value={searchIncomeToDate}
+                onChange={handleIncomeSearchToDate}
                 className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               />
               <button
@@ -447,13 +472,22 @@ function ChurchFinancial() {
             </form>
           </div>
           <div className="table-holder">
-            <div className="search-holder flex items-center gap-2">
+            <div className="search-holder flex items-center gap-2 pt-5">
               <FontAwesomeIcon icon={faSearch} />
+              <span className="font-bold">From:</span>
               <input
-                type="text"
-                placeholder="Search by Date"
-                value={searchExDate}
-                onChange={handleSearchExpenses}
+                type="date"
+                placeholder="Search Date From"
+                value={searchFromDate}
+                onChange={handleSearchFromDate}
+                className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              />
+              <span className="font-bold">To:</span>
+              <input
+                type="date"
+                placeholder="Search Date To"
+                value={searchToDate}
+                onChange={handleSearchToDate}
                 className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-5 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               />
               <button
