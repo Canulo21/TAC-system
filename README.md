@@ -9,3 +9,9 @@ npm install
 npm install -g yarn
 
 npm install -g concurrently
+
+npm install react-scripts --save
+
+npm install -g nodemon
+
+
