@@ -76,7 +76,11 @@ function ChurchPopulation() {
     <div className="text-center">
       <h3>Church Population</h3>
       <div className="pt-10" style={{ width: "100%", height: "500px" }}>
+      {totalMembers === 0 ? (
+        <p className="text-3xl text-center text-bold pt-20">No Data Yet</p>
+      ) : (
         <Doughnut data={data} options={chartOptions} />
+      )}
       </div>
     </div>
   );

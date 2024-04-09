@@ -53,7 +53,7 @@ function AdminDashboard() {
 
   return (
     <>
-      <div className="px-10">
+      <div className="px-5">
         <motion.div
           variants={fadeIn("down", 0.2)}
           initial="hidden"
@@ -106,7 +106,7 @@ function AdminDashboard() {
           ))}
         </motion.div>
       </div>
-      <div className="middle-part flex justify-between pt-5 gap-5 px-10">
+      <div className="middle-part flex justify-between pt-5 gap-5 px-5">
         <motion.div
           variants={fadeIn("right", 0.4)}
           initial="hidden"
@@ -120,11 +120,11 @@ function AdminDashboard() {
           initial="hidden"
           whileInView={"show"}
           viewport={{ once: true, amount: 0.5 }}
-          className="p-5 border-2 border-green-50 rounded-xl w-1/3">
+          className="p-5 border-2 border-green-50 rounded-xl w-1/2">
           <ChurchPopulation />
         </motion.div>
       </div>
-      <div className="middle-part flex justify-between gap-5 px-10">
+      <div className="middle-part flex justify-between gap-5 px-5">
         <motion.div
           variants={fadeIn("up", 0.4)}
           initial="hidden"

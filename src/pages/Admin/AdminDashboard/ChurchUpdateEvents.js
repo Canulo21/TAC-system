@@ -13,7 +13,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 function ChurchUpdateEvents() {
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [setSelectedDate] = useState(null);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     id: "",
