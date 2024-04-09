@@ -29,3 +29,10 @@ tbody tr:hover {
 .hidden {
   display: none;
 }
+
+.box-holder {
+  height: 86%;
+}
+.box-holder canvas {
+  height: 100% !important;
+}

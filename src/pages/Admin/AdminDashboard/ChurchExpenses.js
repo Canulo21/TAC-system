@@ -170,7 +170,7 @@ function ChurchExpenses() {
   };
 
   return (
-    <div className="text-center">
+    <div className="text-center box-holder">
       <h3>Church Financial status</h3>
       <div className="flex items-center justify-between">
         <div className="btn-holder flex gap-2 pt-2">
@@ -190,7 +190,7 @@ function ChurchExpenses() {
           </p>
         </div>
       </div>
-      <div className="pt-5 charts" style={{ width: "100%", height: "auto" }}>
+      <div className="pt-5 charts" style={{ width: "100%", height: "100%" }}>
         {hasData ? (
           <Bar data={data} options={chartOptions} />
         ) : (

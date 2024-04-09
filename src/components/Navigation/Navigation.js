@@ -96,7 +96,7 @@ function Navigation({ inUserId, inUsedBy, inPicBy, onLogout }) {
           </span>
         </NavLink>
 
-        <div className="mr-1 ml-1 mt-40">
+        <div className="mr-1 ml-1 holder-logout">
           <div className="flex items-center p-5 flex-col mb-2">
             <img
               className="w-20 h-20 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500"
