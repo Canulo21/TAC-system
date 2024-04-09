@@ -75,7 +75,7 @@ function ChurchPopulation() {
   return (
     <div className="text-center">
       <h3>Church Population</h3>
-      <div className="pt-10" style={{ width: "500px", height: "500px" }}>
+      <div className="pt-10" style={{ width: "100%", height: "500px" }}>
         <Doughnut data={data} options={chartOptions} />
       </div>
     </div>

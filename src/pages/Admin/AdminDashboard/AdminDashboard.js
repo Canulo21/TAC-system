@@ -59,11 +59,11 @@ function AdminDashboard() {
           initial="hidden"
           whileInView={"show"}
           viewport={{ once: true, amount: 0.3 }}
-          className="category-wrapper flex justify-between flex-wrap">
+          className="category-wrapper grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Object.entries(categoryCounts).map(([category, count]) => (
             <div
               key={category}
-              className={`max-w-sm card rounded overflow-hidden shadow-lg bg-[#FBFADA] w-full ${
+              className={`card rounded overflow-hidden shadow-lg bg-[#FBFADA] w-full ${
                 category === "Mens"
                   ? "mens-class"
                   : category === "Womens"

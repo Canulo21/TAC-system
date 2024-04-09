@@ -53,7 +53,7 @@ function Baptized() {
     <>
       <h3 className="text-center">Baptized</h3>
 
-      <div className="flex justify-evenly pt-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
         <div className="max-w-sm card rounded overflow-hidden shadow-lg bg-[#FBFADA] w-full mens-class text-center py-6 px-2">
           <h4 className="text-gray-900 pb-3">Is Baptized</h4>
           <button
