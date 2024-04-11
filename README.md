@@ -1,3 +1,5 @@
+![localhost_3000_dashboard (1)](https://github.com/Canulo21/TAC-system/assets/91601364/e647ba0f-57b6-425e-bf18-d0d28b7a71e5)
+
 # Getting Started with Create React App
 
 ### Clone
