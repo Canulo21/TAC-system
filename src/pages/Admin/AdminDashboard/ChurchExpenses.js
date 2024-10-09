@@ -70,6 +70,7 @@ function ChurchExpenses() {
 
   const getCoh = async () => {
     try {
+      // Fetch total income and total expenses
       const cohTotalIncome = await axios.get(
         "http://localhost:8080/getTotalIncome"
       );
@@ -80,10 +81,26 @@ function ChurchExpenses() {
       const cohIncomeValue = cohTotalIncome.data[0].totalIncome;
       const cohExpensesValue = cohTotalExpenses.data[0].totalExpenses;
 
-      const cohTotal = (cohIncomeValue - cohExpensesValue).toFixed(2);
+      // Fetch the manually set cash on hand from your database
+      const cohManualSet = await axios.get(
+        "http://localhost:8080/check-cash-on-hand"
+      );
 
+      // Assuming cohManualSet.data.setCoh contains the manually set cash value
+      const cohManualValue = cohManualSet.data.setCoh || 0; // Default to 0 if not set
+
+      // Calculate total cash on hand
+      const cohTotal = (
+        cohIncomeValue -
+        cohExpensesValue +
+        cohManualValue
+      ).toFixed(2);
+
+      // Set the calculated cash on hand value
       setCoh(parseFloat(cohTotal));
-    } catch (err) {}
+    } catch (err) {
+      console.error("Error fetching cash on hand:", err);
+    }
   };
 
   useEffect(() => {
@@ -186,7 +203,14 @@ function ChurchExpenses() {
         </div>
         <div>
           <p className="text-bold">
-            C.O.H: <span className="ml-2">₱{coh}</span>
+            C.O.H:{" "}
+            <span className="ml-2 font-semibold text-xl">
+              ₱
+              {coh.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </span>
           </p>
         </div>
       </div>

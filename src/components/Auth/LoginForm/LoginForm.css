@@ -7,7 +7,7 @@
 .login-holder {
     box-shadow: 5px 5px 12px rgba(0,0,0, .6);
     background: #fbfada;
-    padding: 110px 25px 50px;
+    padding: 110px 25px 20px;
 }
 .img-holder {
     display: flex;

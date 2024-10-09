@@ -55,7 +55,8 @@ function Navigation({ inUserId, inUsedBy, inPicBy, onLogout }) {
     <>
       <button
         onClick={onToggle}
-        className={`hamburger${toggle ? " active" : ""}`}>
+        className={`hamburger${toggle ? " active" : ""}`}
+      >
         <FontAwesomeIcon icon={toggle ? faTimes : faBars} />
       </button>
       <div className={`sidebar${toggle ? " active" : ""}`}>
@@ -65,7 +66,8 @@ function Navigation({ inUserId, inUsedBy, inPicBy, onLogout }) {
               className="rounded-full ring-2 ring-gray-300 dark:ring-gray-500 p-5"
               src={MenuLogo}
               title="logo"
-              alt="logo"></img>
+              alt="logo"
+            ></img>
           </NavLink>
         </header>
         <NavLink to="/dashboard" alt="Dashboard">
@@ -90,12 +92,16 @@ function Navigation({ inUserId, inUsedBy, inPicBy, onLogout }) {
             <FontAwesomeIcon icon={faMoneyBill} /> Financial
           </span>
         </NavLink>
+        <NavLink to="./admins" alt="Reports">
+          <span>
+            <FontAwesomeIcon icon={faUser} /> Admin
+          </span>
+        </NavLink>
         <NavLink to={`/updateMember/${inUserId}`} alt="Profile">
           <span>
             <FontAwesomeIcon icon={faUser} /> Profile
           </span>
         </NavLink>
-
         <div className="mr-1 ml-1 holder-logout">
           <div className="flex items-center p-5 flex-col mb-2">
             <img
@@ -107,7 +113,8 @@ function Navigation({ inUserId, inUsedBy, inPicBy, onLogout }) {
           </div>
           <button
             className="pt-3 pb-3 pl-5 pr-5 bg-[#12372A] text-white w-full uppercase flex items-center "
-            onClick={handleLogout}>
+            onClick={handleLogout}
+          >
             <FontAwesomeIcon icon={faSignOut} />
             <label className="w-full text-xl">log out</label>
           </button>

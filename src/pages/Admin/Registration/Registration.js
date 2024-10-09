@@ -336,7 +336,8 @@ function Registration() {
           variants={fadeIn("down", 0.2)}
           initial="hidden"
           whileInView={"show"}
-          viewport={{ once: true, amount: 0.3 }}>
+          viewport={{ once: true, amount: 0.3 }}
+        >
           <h1>Registration</h1>
         </motion.div>
 
@@ -346,7 +347,8 @@ function Registration() {
           initial="hidden"
           whileInView={"show"}
           viewport={{ once: true, amount: 0.3 }}
-          className="search-holder flex items-center gap-2 mt-10">
+          className="search-holder flex items-center gap-2 mt-10"
+        >
           <FontAwesomeIcon className="text-white text-xl" icon={faSearch} />
           <input
             type="text"
@@ -360,7 +362,8 @@ function Registration() {
           variants={fadeIn("left", 0.2)}
           initial="hidden"
           whileInView={"show"}
-          viewport={{ once: true, amount: 0.3 }}>
+          viewport={{ once: true, amount: 0.3 }}
+        >
           <table className="table-auto mt-2 bg-[#f6fdef] shadow-md px-8 pt-6 pb-8 mb-4 w-full border-collapse border border-slate-400 p-5 ">
             <thead className="bg-[#ADBC9F]">
               <tr>
@@ -404,13 +407,15 @@ function Registration() {
                     <div className="flex gap-2 justify-center">
                       <Link
                         className="bg-green-500 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#12372a]"
-                        to={`/updateMember/${d.user_id}`}>
+                        to={`/updateMember/${d.user_id}`}
+                      >
                         <FontAwesomeIcon icon={faEdit} />
                         Edit
                       </Link>
                       <button
                         className="bg-red-500 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-[#a93737]"
-                        onClick={() => handleDelete(d.user_id)}>
+                        onClick={() => handleDelete(d.user_id)}
+                      >
                         <FontAwesomeIcon icon={faTrash} />
                         Delete
                       </button>
@@ -425,10 +430,12 @@ function Registration() {
           variants={fadeIn("up", 0.2)}
           initial="hidden"
           whileInView={"show"}
-          viewport={{ once: true, amount: 0.3 }}>
+          viewport={{ once: true, amount: 0.3 }}
+        >
           <button
             className="bg-blue-500 text-white py-2 px-4 rounded-md flex items-center gap-2 mt-2 mb-5 ml-2 hover:bg-[#2e5491]"
-            onClick={() => setShowModal(true)}>
+            onClick={() => setShowModal(true)}
+          >
             <FontAwesomeIcon icon={faUserPlus} />
             Add
           </button>
@@ -442,7 +449,8 @@ function Registration() {
                 className="font-bold pagi"
                 onClick={() =>
                   setCurrentPage((currentBatch - 2) * pagesPerBatch + 1)
-                }>
+                }
+              >
                 <FontAwesomeIcon icon={faArrowLeftLong} />
               </button>
             )}
@@ -456,7 +464,8 @@ function Registration() {
                   currentPage === page ? "active" : ""
                 }`}
                 key={page}
-                onClick={() => setCurrentPage(page)}>
+                onClick={() => setCurrentPage(page)}
+              >
                 {page}
               </button>
             ))}
@@ -464,9 +473,8 @@ function Registration() {
             {showRightArrow && (
               <button
                 className="font-bold pagi"
-                onClick={() =>
-                  setCurrentPage(currentBatch * pagesPerBatch + 1)
-                }>
+                onClick={() => setCurrentPage(currentBatch * pagesPerBatch + 1)}
+              >
                 <FontAwesomeIcon icon={faArrowRightLong} />
               </button>
             )}
@@ -481,11 +489,13 @@ function Registration() {
             animate="visible"
             exit="hidden"
             transition={modalTransition}
-            className="registration-holder ">
+            className="registration-holder "
+          >
             <form className="bg-[#fafafa] shadow-md rounded px-8 pt-6 pb-8 mb-4">
               <button
                 onClick={closeModal}
-                className="float-right pt-2 pb-2 pl-5 pr-5 bg-[#436850] hover:bg-[#12372A] text-white rounded-md">
+                className="float-right pt-2 pb-2 pl-5 pr-5 bg-[#436850] hover:bg-[#12372A] text-white rounded-md"
+              >
                 <FontAwesomeIcon icon={faClose} />
               </button>
               <div className="Avatar flex justify-center">
@@ -515,7 +525,8 @@ function Registration() {
                 <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                   <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="grid-first-name">
+                    htmlFor="grid-first-name"
+                  >
                     First Name{" "}
                     <span className="text-red-600 font-bold text-lg"> *</span>
                   </label>
@@ -538,7 +549,8 @@ function Registration() {
                 <div className="w-full md:w-1/3 px-3 pt-2">
                   <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="grid-last-name">
+                    htmlFor="grid-last-name"
+                  >
                     Middle Name
                     <span className="text-gray-400 font-bold align-super text-xs ml-2">
                       (optional)
@@ -557,7 +569,8 @@ function Registration() {
                 <div className="w-full md:w-1/3 px-3">
                   <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="grid-last-name">
+                    htmlFor="grid-last-name"
+                  >
                     Last Name
                     <span className="text-red-600 font-bold text-lg"> *</span>
                   </label>
@@ -581,7 +594,8 @@ function Registration() {
                 <div className="px-3 mb-6 md:mb-0 md:w-1/5">
                   <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="grid-birth-date">
+                    htmlFor="grid-birth-date"
+                  >
                     Birthdate
                     <span className="text-red-600 font-bold text-lg"> *</span>
                   </label>
@@ -621,7 +635,8 @@ function Registration() {
                 <div className="w-full md:w-1/5 px-3">
                   <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="grid-last-name">
+                    htmlFor="grid-last-name"
+                  >
                     Gender
                     <span className="text-red-600 font-bold text-lg"> *</span>
                   </label>
@@ -631,7 +646,8 @@ function Registration() {
                       id="grid-position"
                       name="gender" // Corrected attribute name here
                       value={formData.gender}
-                      onChange={handleInputChange}>
+                      onChange={handleInputChange}
+                    >
                       <option value=""></option>
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
@@ -649,7 +665,8 @@ function Registration() {
                 <div className="w-full md:w-1/5 px-3">
                   <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="grid-last-name">
+                    htmlFor="grid-last-name"
+                  >
                     Position
                     <span className="text-red-600 font-bold text-lg"> *</span>
                   </label>
@@ -659,7 +676,8 @@ function Registration() {
                       id="grid-position"
                       name="position" // Corrected attribute name here
                       value={formData.position}
-                      onChange={handleInputChange}>
+                      onChange={handleInputChange}
+                    >
                       <option value=""></option>
                       <option value="Member">Member</option>
                       <option value="Praise and Worship Team">
@@ -681,7 +699,8 @@ function Registration() {
                 <div className="w-full md:w-1/5 px-3">
                   <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="grid-last-name">
+                    htmlFor="grid-last-name"
+                  >
                     Category
                     <span className="text-red-600 font-bold text-lg"> *</span>
                   </label>
@@ -691,7 +710,8 @@ function Registration() {
                       id="grid-last-name"
                       name="category" // Corrected attribute name here
                       value={formData.category}
-                      onChange={handleInputChange}>
+                      onChange={handleInputChange}
+                    >
                       <option value=""></option>
                       <option value="Mens">Mens</option>
                       <option value="Womens">Womens</option>
@@ -711,7 +731,8 @@ function Registration() {
                 <div className="w-full md:w-1/5 px-3">
                   <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="grid-last-name">
+                    htmlFor="grid-last-name"
+                  >
                     Baptized
                     <span className="text-red-600 font-bold text-lg"> *</span>
                   </label>
@@ -721,7 +742,8 @@ function Registration() {
                       id="grid-last-name"
                       name="baptized" // Corrected attribute name here
                       value={formData.baptized}
-                      onChange={handleInputChange}>
+                      onChange={handleInputChange}
+                    >
                       <option value=""></option>
                       <option value="Yes">Yes</option>
                       <option value="No">No</option>
@@ -741,7 +763,8 @@ function Registration() {
                 <button
                   onClick={handleInsertData}
                   className="text-white bg-[#436850] hover:bg-[#12372a] font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  type="button">
+                  type="button"
+                >
                   Save
                 </button>
               </div>

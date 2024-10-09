@@ -15,6 +15,8 @@ import UpdateChurchFinancial from "./pages/Admin/AdminDashboard/UpdateChurchFina
 import ChurchAddEvents from "./pages/Admin/AdminDashboard/ChurchAddEvents";
 import ChurchUpdateEvents from "./pages/Admin/AdminDashboard/ChurchUpdateEvents";
 import LoginForm from "./components/Auth/LoginForm/LoginForm";
+import PendingAdmins from "./pages/Admin/AdminDashboard/PendingAdmins";
+import AdminRegistration from "./pages/Admin/Registration/AdminRegistration";
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -107,9 +109,11 @@ function App() {
                   path="/updateEvent/:id"
                   element={<ChurchUpdateEvents />}
                 />
+                <Route path="/admins" element={<PendingAdmins />} />
               </>
             )}
             <Route path="*" element={<Navigate to="/dashboard" />} />
+            <Route path="/applyAdmin" element={<AdminRegistration />} />
           </Routes>
         </div>
       </div>

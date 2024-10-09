@@ -35,4 +35,5 @@ tbody tr:hover {
 }
 .box-holder canvas {
   height: 100% !important;
+  width: 100% !important;
 }
